@@ -8,7 +8,6 @@
 */
 
 const AuthController = () => import('#controllers/auth_controller')
-const AssetsController = () => import('#controllers/assets_controller')
 const UserDataController = () => import('#controllers/user_data_controller')
 import { middleware } from '#start/kernel'
 import router from '@adonisjs/core/services/router'
@@ -30,10 +29,21 @@ router
     })
   )
 
-router.group(() => {
-  router
-    .get('/user', [UserDataController, 'getUserData'])
-    .as('getUserData')
-    .use(middleware.auth())
-    .prefix('/api/v1')
-})
+router
+  .group(() => {
+    router
+      .get('/user', [UserDataController, 'getUserData'])
+      .as('getUserData')
+      .use(middleware.auth())
+
+    router
+      .put('/updateUser', [UserDataController, 'updateUserData'])
+      .as('updateUserData')
+      .use(middleware.auth())
+
+    router
+      .put('/updateUserPassword', [UserDataController, 'updateUserPassword'])
+      .as('updateUserPassword')
+      .use(middleware.auth())
+  })
+  .prefix('/api/v1')

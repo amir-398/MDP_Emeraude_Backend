@@ -19,7 +19,7 @@ export default class AssetsController {
   protected file: MultipartFile | null
   protected profilImageName: string
 
-  constructor(file: MultipartFile, profilImageName: string) {
+  constructor(file: MultipartFile | null, profilImageName: string) {
     this.file = file
     this.profilImageName = profilImageName
   }
