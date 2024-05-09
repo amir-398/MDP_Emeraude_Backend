@@ -1,7 +1,7 @@
-import User from '#models/user'
 import { updateUserPasswordValidator, updateUserValidator } from '#validators/update_user_data'
 import type { HttpContext } from '@adonisjs/core/http'
 import hash from '@adonisjs/core/services/hash'
+import db from '@adonisjs/lucid/services/db'
 import AssetsController from './assets_controller.js'
 export default class UserDataController {
   // get user data
@@ -50,53 +50,17 @@ export default class UserDataController {
       if (!(await hash.verify(user!.password, oldPassword))) {
         return response.badRequest({ message: 'Invalid old password' })
       }
-      return user
       await user
         .merge({
           password: newPassword,
         })
         .save()
       //logout and delete all tokens
-      // await User.accessTokens.delete(user, user.currentAccessToken!.identifier)
-      await User.accessTokens.delete(user, user.id)
+      await db.from('auth_access_tokens').where('tokenable_id', user.id).delete()
 
       return response.status(200).json({ message: 'User password updated successfully' })
     } catch (error) {
       return response.status(401).json({ message: 'Unauthorized' })
     }
   }
-
-  /**
-   * Display a list of resource
-   */
-  async index({}: HttpContext) {}
-
-  /**
-   * Display form to create a new record
-   */
-  async create({}: HttpContext) {}
-
-  /**
-   * Handle form submission for the create action
-   */
-  async store({ request }: HttpContext) {}
-
-  /**
-   * Show individual record
-   */
-  async show({ params }: HttpContext) {}
-
-  /**
-   * Edit individual record
-   */
-  async edit({ params }: HttpContext) {}
-
-  /**
-   * Handle form submission for the edit action
-   */
-
-  /**
-   * Delete record
-   */
-  async destroy({ params }: HttpContext) {}
 }
