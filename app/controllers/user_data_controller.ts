@@ -11,7 +11,7 @@ export default class UserDataController {
       if (!user) {
         return response.status(401).json({ message: 'Unauthorized' })
       }
-      const getUrlInstance = new AssetsController(null, user.profil_image_name)
+      const getUrlInstance = new AssetsController(null, user.profilImageName)
       const url = await getUrlInstance.create()
       const userData = { ...user.$attributes, url }
       return response.status(200).json({ userData })

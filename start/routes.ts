@@ -9,6 +9,8 @@
 
 const AuthController = () => import('#controllers/auth_controller')
 const UserDataController = () => import('#controllers/user_data_controller')
+const FriendsController = () => import('#controllers/friends_controller')
+const RolesController = () => import('#controllers/roles_controller')
 import { middleware } from '#start/kernel'
 import router from '@adonisjs/core/services/router'
 
@@ -29,21 +31,33 @@ router
     })
   )
 
+// user data routes
 router
   .group(() => {
-    router
-      .get('/user', [UserDataController, 'getUserData'])
-      .as('getUserData')
-      .use(middleware.auth())
-
-    router
-      .put('/updateUser', [UserDataController, 'updateUserData'])
-      .as('updateUserData')
-      .use(middleware.auth())
-
+    router.get('/user', [UserDataController, 'getUserData']).as('getUserData')
+    router.put('/updateUser', [UserDataController, 'updateUserData']).as('updateUserData')
     router
       .put('/updateUserPassword', [UserDataController, 'updateUserPassword'])
       .as('updateUserPassword')
-      .use(middleware.auth())
   })
+  .use(middleware.auth())
+  .prefix('/api/v1')
+
+// friends routes
+router
+  .group(() => {
+    router.get('/', [FriendsController, 'getFriends'])
+    router.get('/pendingInvitations', [FriendsController, 'getPendingInvitation'])
+    router.post('/sendInvitation/:userId', [FriendsController, 'sendInvitation'])
+  })
+  .use(middleware.auth())
+  .prefix('/api/v1/friends')
+
+// user roles routes
+
+router
+  .group(() => {
+    router.post('/roles/createRole', [RolesController, 'create'])
+  })
+
   .prefix('/api/v1')

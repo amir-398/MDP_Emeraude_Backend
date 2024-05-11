@@ -24,7 +24,6 @@ export default class extends BaseSchema {
       table.timestamp('expires_at').nullable()
     })
   }
-
   async down() {
     this.schema.dropTable(this.tableName)
   }
