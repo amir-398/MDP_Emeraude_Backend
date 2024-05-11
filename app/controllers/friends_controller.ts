@@ -5,8 +5,6 @@ import User from '#models/user'
 import { sendInvitationValidator } from '#validators/friend'
 
 export default class FriendsController {
-  // get friends
-
   // send an invitation
   async sendInvitation({ params, response, auth }: HttpContext) {
     try {
@@ -61,7 +59,7 @@ export default class FriendsController {
         return response.status(401).json({ message: 'Unauthorized' })
       }
       // const userFiends = await User.query().preload('friends')
-      const friends = []
+      const friends: User[] = []
       // return userFiends
       const snapFriends = await User.query()
         .where('id', user.id)
