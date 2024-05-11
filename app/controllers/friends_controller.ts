@@ -54,28 +54,38 @@ export default class FriendsController {
   }
   // get friends
   async getFriends({ auth, response }: HttpContext) {
+    const limit = 5
     try {
       const user = auth.getUserOrFail()
       if (!user) {
         return response.status(401).json({ message: 'Unauthorized' })
       }
       // const userFiends = await User.query().preload('friends')
-
+      const friends = []
       // return userFiends
-      const friends = await User.query()
+      const snapFriends = await User.query()
         .where('id', user.id)
         .preload('sendedInvitations', (query) => {
-          query.preload('user2')
+          return query.preload('receiverData').where('status', 'accepted')
         })
         .preload('receivedInvitations', (query) => {
-          query.preload('user1')
+          return query.preload('senderData').where('status', 'accepted')
         })
+        .first()
+
+      snapFriends?.sendedInvitations?.forEach((friend) => {
+        friends.push(friend.receiverData)
+      })
+      snapFriends?.receivedInvitations?.forEach((friend) => {
+        friends.push(friend.senderData)
+      })
 
       return friends
     } catch (error) {
       return response.status(401).json({ message: error.message || 'Unauthorized' })
     }
   }
+
   // accept an invitation
   async acceptInvitation({ params, response, auth }: HttpContext) {
     try {

@@ -56,6 +56,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
     foreignKey: 'userId1',
   })
   declare sendedInvitations: HasMany<typeof Friend>
+
   @hasMany(() => Friend, {
     localKey: 'id',
     foreignKey: 'userId2',
