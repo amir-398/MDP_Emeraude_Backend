@@ -47,7 +47,9 @@ router
 router
   .group(() => {
     router.get('/', [FriendsController, 'getFriends'])
-    router.get('/pendingInvitations', [FriendsController, 'getPendingInvitation'])
+    router.get('/pendingInvitations', [FriendsController, 'getPendingInvitations'])
+    router.put('/acceptInvitation/:friendId', [FriendsController, 'acceptInvitation'])
+    router.put('/rejectInvitation/:friendId', [FriendsController, 'rejectInvitation'])
     router.post('/sendInvitation/:userId', [FriendsController, 'sendInvitation'])
   })
   .use(middleware.auth())

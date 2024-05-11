@@ -13,6 +13,9 @@ export default class Friend extends BaseModel {
   @column()
   declare userId2: number
 
+  @column()
+  declare status: string
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
@@ -20,8 +23,8 @@ export default class Friend extends BaseModel {
   declare updatedAt: DateTime
 
   @belongsTo(() => User, { foreignKey: 'userId1' })
-  declare user1: BelongsTo<typeof User>
+  declare senderData: BelongsTo<typeof User>
 
   @belongsTo(() => User, { foreignKey: 'userId2' })
-  declare user2: BelongsTo<typeof User>
+  declare receiverData: BelongsTo<typeof User>
 }
