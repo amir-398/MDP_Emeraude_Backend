@@ -2,7 +2,6 @@ import { updateUserPasswordValidator, updateUserValidator } from '#validators/up
 import type { HttpContext } from '@adonisjs/core/http'
 import hash from '@adonisjs/core/services/hash'
 import db from '@adonisjs/lucid/services/db'
-import AssetsController from './assets_controller.js'
 export default class UserDataController {
   // get user data
   async getUserData({ auth, response }: HttpContext) {
@@ -11,12 +10,9 @@ export default class UserDataController {
       if (!user) {
         return response.status(401).json({ message: 'Unauthorized' })
       }
-      const getUrlInstance = new AssetsController(null, user.profilImageName)
-      const url = await getUrlInstance.create()
-      const userData = { ...user.$attributes, url }
-      return response.status(200).json({ userData })
+      return response.status(200).json({ user })
     } catch (error) {
-      return response.status(401).json({ message: 'Unauthorized' })
+      return response.status(401).json({ message: error.message || 'Unauthorized' })
     }
   }
 

@@ -6,13 +6,15 @@
 | The routes file is used for defining the HTTP routes.
 |
 */
+import { middleware } from '#start/kernel'
+import router from '@adonisjs/core/services/router'
+import Client from 'pg'
+const MessagesController = () => import('#controllers/messages_controller')
 
 const AuthController = () => import('#controllers/auth_controller')
 const UserDataController = () => import('#controllers/user_data_controller')
 const FriendsController = () => import('#controllers/friends_controller')
 const RolesController = () => import('#controllers/roles_controller')
-import { middleware } from '#start/kernel'
-import router from '@adonisjs/core/services/router'
 
 router
   .group(() => {
@@ -63,3 +65,39 @@ router
   })
 
   .prefix('/api/v1')
+
+router
+  .group(() => {
+    router.get('/messages', [MessagesController, 'notif']).as('notif')
+  })
+  .prefix('/api/v1')
+
+const client = new Client.Client({
+  user: 'postgres',
+  password: 'sk43subezero',
+  database: 'postgres',
+  host: 'localhost',
+  port: 5432,
+})
+
+client
+  .connect()
+  .then(() => {
+    console.log('Connected to PostgreSQL database')
+  })
+  .catch((err) => {
+    console.error('Error connecting to PostgreSQL database', err)
+  })
+
+client.query('LISTEN new_message')
+
+client.on('notification', (msg) => {
+  console.log('Received notification:', msg, msg.payload)
+  // Ici, vous pouvez implémenter la logique pour gérer le message, par exemple en envoyant des données aux clients WebSocket
+})
+
+// Pour maintenir le script en exécution
+process.on('SIGINT', () => {
+  client.end()
+  process.exit()
+})
