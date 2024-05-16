@@ -8,7 +8,7 @@
 */
 import { middleware } from '#start/kernel'
 import router from '@adonisjs/core/services/router'
-import Client from 'pg'
+const RoomsController = () => import('#controllers/rooms_controller')
 const MessagesController = () => import('#controllers/messages_controller')
 
 const AuthController = () => import('#controllers/auth_controller')
@@ -66,38 +66,41 @@ router
 
   .prefix('/api/v1')
 
+//user rooms routes
 router
   .group(() => {
-    router.get('/messages', [MessagesController, 'notif']).as('notif')
+    router.post('/rooms/create', [RoomsController, 'create'])
   })
+  .use(middleware.auth())
   .prefix('/api/v1')
 
-const client = new Client.Client({
-  user: 'postgres',
-  password: 'sk43subezero',
-  database: 'postgres',
-  host: 'localhost',
-  port: 5432,
-})
+// router
+//   .group(() => {
+//     router.get('messages', [MessagesController, 'store']).as('submitMessage')
+//   })
+//   .prefix('/api/v1')
 
-client
-  .connect()
-  .then(() => {
-    console.log('Connected to PostgreSQL database')
-  })
-  .catch((err) => {
-    console.error('Error connecting to PostgreSQL database', err)
-  })
+// router.get('/api/v1/messages', async () => {
+//   emitter.emit('send-io-message', {
+//     message: 'Hello from AdonisJS',
+//   })
+//   // verify if the message was sent
 
-client.query('LISTEN new_message')
+//   return 'pong'
+// })
+// emitter.on('send-io-message', async (data) => {
+//   console.log('Event received:', data)
 
-client.on('notification', (msg) => {
-  console.log('Received notification:', msg, msg.payload)
-  // Ici, vous pouvez implémenter la logique pour gérer le message, par exemple en envoyant des données aux clients WebSocket
-})
+//   // Set a timeout of 5 seconds
+//   const timeout = 1000
 
-// Pour maintenir le script en exécution
-process.on('SIGINT', () => {
-  client.end()
-  process.exit()
-})
+//   // Execute some asynchronous task
+//   try {
+//     // Simulate a delay with a promise
+//     await new Promise((resolve) => setTimeout(resolve, timeout))
+//     ws.io?.emit('ping', { message: 'pong send by adonisJS' })
+//     console.log('Asynchronous task completed')
+//   } catch (error) {
+//     console.error('Error:', error.message)
+//   }
+// })

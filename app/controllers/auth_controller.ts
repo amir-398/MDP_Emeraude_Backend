@@ -9,6 +9,7 @@ import AssetsController from './assets_controller.js'
 export default class AuthController {
   //register logic
   async register({ request, response }: HttpContext) {
+    // const user.related
     const payload = await request.validateUsing(registerUserValidator)
     const profilImage = request.file('profil_image')
     //generate a random name for the image

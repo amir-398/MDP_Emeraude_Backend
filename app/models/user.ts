@@ -8,6 +8,9 @@ import hash from '@adonisjs/core/services/hash'
 import { BaseModel, afterFind, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
+import Conversation from './conversation.js'
+import Message from './message.js'
+import RoomMember from './room_member.js'
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
   passwordColumnName: 'password',
@@ -70,4 +73,22 @@ export default class User extends compose(BaseModel, AuthFinder) {
     foreignKey: 'userId2',
   })
   declare receivedInvitations: HasMany<typeof Friend>
+
+  @hasMany(() => Conversation, {
+    localKey: 'id',
+    foreignKey: 'userId1',
+  })
+  declare conversations1: HasMany<typeof Conversation>
+
+  @hasMany(() => Conversation, {
+    localKey: 'id',
+    foreignKey: 'userId2',
+  })
+  declare conversations2: HasMany<typeof Conversation>
+
+  @hasMany(() => Message)
+  declare messages: HasMany<typeof Message>
+
+  @hasMany(() => RoomMember)
+  declare roomMembers: HasMany<typeof RoomMember>
 }
