@@ -11,7 +11,7 @@ export default class Room extends BaseModel {
   declare name: string
 
   @column()
-  declare room_type: 'public' | 'private'
+  declare roomType: 'public' | 'private'
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

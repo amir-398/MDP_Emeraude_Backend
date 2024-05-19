@@ -9,14 +9,6 @@ export default class extends BaseSchema {
       table.integer('room_id').unsigned().references('id').inTable('rooms').notNullable()
       table.integer('user_id').unsigned().references('id').inTable('users').notNullable()
       table
-        .enu('status', ['pending', 'accepted', 'rejected'], {
-          useNative: true,
-          existingType: true,
-          enumName: 'room_members_status',
-        })
-        .defaultTo('pending')
-        .notNullable()
-      table
         .enum('role', ['member', 'moderator', 'admin'], {
           useNative: true,
           existingType: true,
@@ -30,7 +22,6 @@ export default class extends BaseSchema {
   }
 
   async down() {
-    this.schema.raw('DROP TYPE IF EXISTS "room_members_status"')
     this.schema.raw('DROP TYPE IF EXISTS "room_members_role"')
     this.schema.dropTable(this.tableName)
   }

@@ -69,11 +69,13 @@ router
 //user rooms routes
 router
   .group(() => {
-    router.post('/rooms/create', [RoomsController, 'create'])
+    router.post('/create', [RoomsController, 'create'])
+    router.get('/rooms', [RoomsController, 'index'])
+    router.get('/rooms/:id', [RoomsController, 'show'])
+    router.put('/:id', [RoomsController, 'update'])
   })
   .use(middleware.auth())
-  .prefix('/api/v1')
-
+  .prefix('/api/v1/rooms')
 // router
 //   .group(() => {
 //     router.get('messages', [MessagesController, 'store']).as('submitMessage')

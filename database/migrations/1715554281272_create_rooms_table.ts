@@ -1,4 +1,5 @@
 import { BaseSchema } from '@adonisjs/lucid/schema'
+import RoomType from '../../app/enums/room_type.js'
 
 export default class extends BaseSchema {
   protected tableName = 'rooms'
@@ -13,7 +14,7 @@ export default class extends BaseSchema {
           existingType: true,
           enumName: 'room_type',
         })
-        .defaultTo('public')
+        .defaultTo(RoomType.PRIVATE)
         .notNullable()
       table.timestamp('created_at')
       table.timestamp('updated_at')
