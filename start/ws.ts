@@ -9,12 +9,14 @@ app.ready(() => {
     if (!isHandshake) {
       return next()
     }
-    const header = req.headers['authorization']
-
-    console.log('Header:', header)
+    const header = req.headers['data']
+    req.user = header
+    next()
   })
   io?.on('connection', (socket) => {
-    const user = socket.request.user
-    console.log('User connected:', user)
+    const userId = socket.request.user
+    // the user ID is used as a room
+    socket.join(`user:${userId}`)
+    console.log('User connected:', userId)
   })
 })
