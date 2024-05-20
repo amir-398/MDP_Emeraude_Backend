@@ -1,3 +1,4 @@
+import RoomMembersRole from '#enums/room_members_role'
 import { BaseSchema } from '@adonisjs/lucid/schema'
 
 export default class extends BaseSchema {
@@ -9,12 +10,12 @@ export default class extends BaseSchema {
       table.integer('room_id').unsigned().references('id').inTable('rooms').notNullable()
       table.integer('user_id').unsigned().references('id').inTable('users').notNullable()
       table
-        .enum('role', ['member', 'moderator', 'admin'], {
+        .enum('role', [RoomMembersRole.MEMBER, RoomMembersRole.MODERATOR, RoomMembersRole.ADMIN], {
           useNative: true,
           existingType: true,
           enumName: 'room_members_role',
         })
-        .defaultTo('member')
+        .defaultTo(RoomMembersRole.MEMBER)
         .notNullable()
       table.timestamp('created_at')
       table.timestamp('updated_at')

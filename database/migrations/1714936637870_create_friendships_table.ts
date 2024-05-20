@@ -27,7 +27,7 @@ export default class extends BaseSchema {
         [FriendshipStatus.ACCEPTED, FriendshipStatus.PENDING, FriendshipStatus.REJECTED],
         {
           useNative: true,
-          existingType: false,
+          existingType: true,
           enumName: 'friendship_status',
         }
       )

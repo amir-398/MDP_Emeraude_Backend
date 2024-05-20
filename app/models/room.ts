@@ -1,7 +1,8 @@
+import RoomType from '#enums/room_type'
+import RoomMember from '#models/room_member'
 import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
-import RoomMember from './room_member.js'
 
 export default class Room extends BaseModel {
   @column({ isPrimary: true })
@@ -11,7 +12,7 @@ export default class Room extends BaseModel {
   declare name: string
 
   @column()
-  declare roomType: 'public' | 'private'
+  declare roomType: RoomType.PUBLIC | RoomType.PRIVATE
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

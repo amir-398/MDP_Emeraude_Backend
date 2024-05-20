@@ -1,7 +1,7 @@
 enum RoomMembersRole {
-  ADMIN = 'ADMIN',
-  MEMBER = 'MEMBER',
-  MODERATOR = 'MODERATOR',
+  ADMIN = 'admin',
+  MEMBER = 'member',
+  MODERATOR = 'moderator',
 }
 
 export default RoomMembersRole

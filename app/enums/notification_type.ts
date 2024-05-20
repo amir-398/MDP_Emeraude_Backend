@@ -1,14 +1,14 @@
 enum NotificationType {
-  FRIENDSHIP_REQUEST = 'FRIENDSHIP_REQUEST',
-  FRIENDSHIP_ACCEPTED = 'FRIENDSHIP_ACCEPTED',
-  FRIENDSHIP_REJECTED = 'FRIENDSHIP_REJECTED',
-  MESSAGE = 'MESSAGE',
-  LIKE = 'LIKE',
-  COMMENT = 'COMMENT',
-  SHARE = 'SHARE',
-  POST = 'POST',
-  GROUP = 'GROUP',
-  EVENT = 'EVENT',
+  FRIENDSHIP_REQUEST = 'friendship_request',
+  FRIENDSHIP_ACCEPTED = 'friendship_accepted',
+  FRIENDSHIP_REJECTED = 'friendship_rejected',
+  MESSAGE = 'message',
+  LIKE = 'like',
+  COMMENT = 'comment',
+  SHARE = 'share',
+  POST = 'post',
+  GROUP = 'group',
+  EVENT = 'event',
 }
 
 export default NotificationType

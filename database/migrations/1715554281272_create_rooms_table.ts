@@ -1,5 +1,5 @@
+import RoomType from '#enums/room_type'
 import { BaseSchema } from '@adonisjs/lucid/schema'
-import RoomType from '../../app/enums/room_type.js'
 
 export default class extends BaseSchema {
   protected tableName = 'rooms'
@@ -9,7 +9,7 @@ export default class extends BaseSchema {
       table.increments('id')
       table.string('name').notNullable()
       table
-        .enu('room_type', ['public', 'private'], {
+        .enu('type', [RoomType.PUBLIC, RoomType.PRIVATE], {
           useNative: true,
           existingType: true,
           enumName: 'room_type',
