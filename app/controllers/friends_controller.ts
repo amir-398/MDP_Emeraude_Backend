@@ -1,9 +1,9 @@
-import type { HttpContext } from '@adonisjs/core/http'
-
-import Friend from '#models/friend'
+import { default as Friend, default as Friendship } from '#models/friendship'
 import User from '#models/user'
-import FriendPolicy from '#policies/friend_policy'
-import { sendInvitationValidator } from '#validators/friend'
+import FriendPolicy from '#policies/friendship_policy'
+import { sendInvitationValidator } from '#validators/friendship'
+import type { HttpContext } from '@adonisjs/core/http'
+import emitter from '@adonisjs/core/services/emitter'
 import FriendshipStatus from '../enums/frienship_status.js'
 
 export default class FriendsController {
@@ -12,8 +12,16 @@ export default class FriendsController {
     try {
       // user sending the invitation
       const user = auth.user?.id
-      // user receiving the invitation
       const userId = params.userId
+      const friends = user
+        ? await Friendship.query().where('userId2', user).where('userId1', userId)
+        : []
+      if (friends.length > 0) {
+        return response.status(400).json({ message: 'Invitation already exists' })
+      }
+
+      // user receiving the invitation
+
       const payload = await sendInvitationValidator.validate({ userId })
 
       if (user === payload.userId) {
@@ -30,11 +38,12 @@ export default class FriendsController {
   // get pending invitations
   async getPendingInvitations({ auth, response }: HttpContext) {
     try {
+      emitter.emit('user:registered', 'siii')
       const user = auth.user
       const userId = user?.id
       const pendingInvitations =
         userId &&
-        (await Friend.query()
+        (await Friendship.query()
           .where('userId2', userId)
           .where('status', 'pending')
           .preload('senderData'))
@@ -79,10 +88,10 @@ export default class FriendsController {
   }
 
   // accept an invitation
-  async acceptInvitation({ params, response, auth, bouncer }: HttpContext) {
+  async acceptInvitation({ params, response, bouncer }: HttpContext) {
     try {
       const friendId = params.friendId
-      const friend = await Friend.findOrFail(friendId)
+      const friend = await Friendship.findOrFail(friendId)
 
       if (await bouncer.with(FriendPolicy).denies('editInvitation', friend)) {
         // get my custom message from my policy
@@ -99,10 +108,10 @@ export default class FriendsController {
   }
 
   // reject an invitation
-  async rejectInvitation({ params, response, auth, bouncer }: HttpContext) {
+  async rejectInvitation({ params, response, bouncer }: HttpContext) {
     try {
       const friendId = params.friendId
-      const friend = await Friend.findOrFail(friendId)
+      const friend = await Friendship.findOrFail(friendId)
 
       if (await bouncer.with(FriendPolicy).denies('editInvitation', friend)) {
         // get my custom message from my policy

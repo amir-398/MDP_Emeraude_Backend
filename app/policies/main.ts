@@ -14,5 +14,5 @@
 
 export const policies = {
   RoomPolicy: () => import('#policies/room_policy'),
-  FriendPolicy: () => import('#policies/friend_policy'),
+  FriendPolicy: () => import('#policies/friendship_policy'),
 }

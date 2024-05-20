@@ -76,6 +76,7 @@ router
   })
   .use(middleware.auth())
   .prefix('/api/v1/rooms')
+
 // router
 //   .group(() => {
 //     router.get('messages', [MessagesController, 'store']).as('submitMessage')

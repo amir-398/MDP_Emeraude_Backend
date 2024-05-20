@@ -1,4 +1,4 @@
-import Friend from '#models/friend'
+import Friendship from '#models/friendship'
 import User from '#models/user'
 import { BasePolicy } from '@adonisjs/bouncer'
 import { AuthorizerResponse } from '@adonisjs/bouncer/types'
@@ -10,7 +10,7 @@ export default class FriendPolicy extends BasePolicy {
    * @param friend
    * @returns
    */
-  editInvitation(user: User, friend: Friend): AuthorizerResponse {
+  editInvitation(user: User, friend: Friendship): AuthorizerResponse {
     const isPending = friend.status === FriendshipStatus.PENDING
     const isReceiver = user.id === friend.userId2
 

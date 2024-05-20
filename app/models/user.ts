@@ -1,6 +1,10 @@
 import AssetsController from '#controllers/assets_controller'
-import Friend from '#models/friend'
+import Conversation from '#models/conversation'
+import Friend from '#models/friendship'
+import Message from '#models/message'
+import Notification from '#models/notification'
 import Role from '#models/role'
+import RoomMember from '#models/room_member'
 import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import { compose } from '@adonisjs/core/helpers'
@@ -9,9 +13,6 @@ import { BaseModel, afterFind, belongsTo, column, computed, hasMany } from '@ado
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import Roles from '../enums/role.js'
-import Conversation from './conversation.js'
-import Message from './message.js'
-import RoomMember from './room_member.js'
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
   passwordColumnName: 'password',
@@ -97,4 +98,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   @hasMany(() => RoomMember)
   declare roomMembers: HasMany<typeof RoomMember>
+
+  @hasMany(() => Notification)
+  declare notifications: HasMany<typeof Notification>
 }
