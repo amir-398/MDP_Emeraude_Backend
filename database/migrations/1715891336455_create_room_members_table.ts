@@ -12,8 +12,8 @@ export default class extends BaseSchema {
       table
         .enum('role', [RoomMembersRole.MEMBER, RoomMembersRole.MODERATOR, RoomMembersRole.ADMIN], {
           useNative: true,
-          existingType: true,
           enumName: 'room_members_role',
+          existingType: true,
         })
         .defaultTo(RoomMembersRole.MEMBER)
         .notNullable()

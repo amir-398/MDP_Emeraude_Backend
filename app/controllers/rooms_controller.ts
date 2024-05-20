@@ -59,10 +59,9 @@ export default class RoomsController {
       await trx.commit()
       return response.status(201).json({ message: 'Room created successfully', roomId: room.id })
     } catch (error) {
+      await trx.rollback()
       console.error('Room creation failed:', error)
       return response.status(400).json({ message: error || 'An error occurred' })
-    } finally {
-      await trx.rollback()
     }
   }
 

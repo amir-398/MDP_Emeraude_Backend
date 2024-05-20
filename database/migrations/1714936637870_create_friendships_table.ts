@@ -1,5 +1,5 @@
 import { BaseSchema } from '@adonisjs/lucid/schema'
-import FriendshipStatus from '../../app/enums/frienship_status.js'
+import FriendshipStatus from '../../app/enums/friendship_status.js'
 
 export default class extends BaseSchema {
   protected tableName = 'friendships'
@@ -22,15 +22,18 @@ export default class extends BaseSchema {
         .onDelete('CASCADE')
         .notNullable()
       table.unique(['user_id_1', 'user_id_2'])
-      table.enu(
-        'status',
-        [FriendshipStatus.ACCEPTED, FriendshipStatus.PENDING, FriendshipStatus.REJECTED],
-        {
-          useNative: true,
-          existingType: true,
-          enumName: 'friendship_status',
-        }
-      )
+      table
+        .enu(
+          'status',
+          [FriendshipStatus.ACCEPTED, FriendshipStatus.PENDING, FriendshipStatus.REJECTED],
+          {
+            useNative: true,
+            enumName: 'friendship_status',
+            existingType: true,
+          }
+        )
+        .defaultTo(FriendshipStatus.PENDING)
+        .notNullable()
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })

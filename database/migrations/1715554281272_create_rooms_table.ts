@@ -11,8 +11,8 @@ export default class extends BaseSchema {
       table
         .enu('type', [RoomType.PUBLIC, RoomType.PRIVATE], {
           useNative: true,
-          existingType: true,
           enumName: 'room_type',
+          existingType: true,
         })
         .defaultTo(RoomType.PRIVATE)
         .notNullable()
