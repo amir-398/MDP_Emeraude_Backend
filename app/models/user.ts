@@ -31,21 +31,6 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column({ serializeAs: null })
   declare password: string
 
-  @column()
-  declare firstname: string
-
-  @column()
-  declare lastname: string
-
-  @column()
-  declare birthdate: Date
-
-  @column()
-  declare profilImageName: string
-
-  @column()
-  declare profilImageUrl: string
-
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

@@ -14,24 +14,14 @@ const MessagesController = () => import('#controllers/messages_controller')
 const AuthController = () => import('#controllers/auth_controller')
 const UserDataController = () => import('#controllers/user_data_controller')
 const FriendsController = () => import('#controllers/friends_controller')
-const RolesController = () => import('#controllers/roles_controller')
 
+// auth login register routes
 router
   .group(() => {
-    router.post('/auth/register', [AuthController, 'register']).as('register')
-    router.post('/auth/login', [AuthController, 'login']).as('login')
+    router.post('/register', [AuthController, 'register']).as('register')
+    router.post('/login', [AuthController, 'login']).as('login')
   })
-  .prefix('/api/v1')
-
-router
-  .get('/api/v1', async () => {
-    return 'protected route'
-  })
-  .use(
-    middleware.auth({
-      guards: ['api'],
-    })
-  )
+  .prefix('/auth/api/v1')
 
 // user data routes
 router
@@ -57,15 +47,6 @@ router
   .use(middleware.auth())
   .prefix('/api/v1/friends')
 
-// user roles routes
-
-router
-  .group(() => {
-    router.post('/roles/createRole', [RolesController, 'create'])
-  })
-
-  .prefix('/api/v1')
-
 //user rooms routes
 router
   .group(() => {
@@ -76,34 +57,3 @@ router
   })
   .use(middleware.auth())
   .prefix('/api/v1/rooms')
-
-// router
-//   .group(() => {
-//     router.get('messages', [MessagesController, 'store']).as('submitMessage')
-//   })
-//   .prefix('/api/v1')
-
-// router.get('/api/v1/messages', async () => {
-//   emitter.emit('send-io-message', {
-//     message: 'Hello from AdonisJS',
-//   })
-//   // verify if the message was sent
-
-//   return 'pong'
-// })
-// emitter.on('send-io-message', async (data) => {
-//   console.log('Event received:', data)
-
-//   // Set a timeout of 5 seconds
-//   const timeout = 1000
-
-//   // Execute some asynchronous task
-//   try {
-//     // Simulate a delay with a promise
-//     await new Promise((resolve) => setTimeout(resolve, timeout))
-//     ws.io?.emit('ping', { message: 'pong send by adonisJS' })
-//     console.log('Asynchronous task completed')
-//   } catch (error) {
-//     console.error('Error:', error.message)
-//   }
-// })
