@@ -26,6 +26,8 @@ export default class AssetsController {
 
   async store() {
     const file = this.file
+    console.log('file', file)
+
     const stream = createReadStream(file?.tmpPath!)
     const params = {
       Bucket: bucketName || '',
@@ -38,7 +40,7 @@ export default class AssetsController {
       const response = await client.send(command)
       return response
     } catch (err) {
-      return err.message
+      throw err.message
     }
   }
 

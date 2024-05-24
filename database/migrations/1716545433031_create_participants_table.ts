@@ -1,42 +1,47 @@
+import Status from '#enums/status'
 import { BaseSchema } from '@adonisjs/lucid/schema'
-import { default as FriendshipStatus, default as Status } from '../../app/enums/status.js'
 
 export default class extends BaseSchema {
-  protected tableName = 'friendships'
+  protected tableName = 'participants'
 
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
       table
-        .integer('user_id_1')
+        .integer('post_id')
+        .unsigned()
+        .references('id')
+        .inTable('posts')
+        .onDelete('CASCADE')
+        .notNullable()
+      table
+        .integer('user_id')
         .unsigned()
         .references('id')
         .inTable('users')
         .onDelete('CASCADE')
         .notNullable()
       table
-        .integer('user_id_2')
+        .integer('invited_by')
         .unsigned()
         .references('id')
         .inTable('users')
         .onDelete('CASCADE')
         .notNullable()
-      table.unique(['user_id_1', 'user_id_2'])
       table
-        .enu('status', [Status.ACCEPTED, Status.PENDING, Status.REJECTED], {
+        .enu('status', [Status.REJECTED, Status.PENDING, Status.ACCEPTED], {
           useNative: true,
-          enumName: 'friendship_status',
+          enumName: 'participant_status',
           existingType: true,
         })
-        .defaultTo(FriendshipStatus.PENDING)
-        .notNullable()
+        .defaultTo('pending')
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })
   }
 
   async down() {
-    this.schema.raw('DROP TYPE IF EXISTS "friendship_status"')
+    this.schema.raw('DROP TYPE IF EXISTS "participant_status"')
     this.schema.dropTable(this.tableName)
   }
 }

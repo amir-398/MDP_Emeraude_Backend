@@ -10,7 +10,7 @@ export default class extends BaseSchema {
       table.integer('room_id').unsigned().references('id').inTable('rooms').notNullable()
       table.integer('user_id').unsigned().references('id').inTable('users').notNullable()
       table
-        .enum('role', [RoomMembersRole.MEMBER, RoomMembersRole.MODERATOR, RoomMembersRole.ADMIN], {
+        .enu('role', [RoomMembersRole.MEMBER, RoomMembersRole.MODERATOR, RoomMembersRole.ADMIN], {
           useNative: true,
           enumName: 'room_members_role',
           existingType: true,

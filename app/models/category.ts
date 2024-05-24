@@ -1,9 +1,10 @@
+import SubCategory from '#models/sub_category'
 import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
-import { DateTime } from 'luxon'
-import User from '#models/user'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
+import { DateTime } from 'luxon'
+import Post from './post.js'
 
-export default class Role extends BaseModel {
+export default class Category extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
@@ -16,6 +17,9 @@ export default class Role extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
 
-  @hasMany(() => User)
-  declare users: HasMany<typeof User>
+  @hasMany(() => SubCategory)
+  declare subCategories: HasMany<typeof SubCategory>
+
+  @hasMany(() => Post)
+  declare posts: HasMany<typeof Post>
 }

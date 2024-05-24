@@ -1,7 +1,7 @@
-enum FriendshipStatus {
+enum Status {
   PENDING = 'pending',
   ACCEPTED = 'accepted',
   REJECTED = 'rejected',
 }
 
-export default FriendshipStatus
+export default Status

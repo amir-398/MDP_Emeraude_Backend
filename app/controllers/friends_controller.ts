@@ -6,7 +6,7 @@ import { sendInvitationValidator } from '#validators/friendship'
 import type { HttpContext } from '@adonisjs/core/http'
 import emitter from '@adonisjs/core/services/emitter'
 import db from '@adonisjs/lucid/services/db'
-import FriendshipStatus from '../enums/friendship_status.js'
+import FriendshipStatus from '../enums/status.js'
 import NotificationsController from './notifications_controller.js'
 
 export default class FriendsController {

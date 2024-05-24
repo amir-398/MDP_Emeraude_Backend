@@ -1,29 +1,24 @@
-import AssetsController from '#controllers/assets_controller'
 import Conversation from '#models/conversation'
 import Friend from '#models/friendship'
 import Message from '#models/message'
 import Notification from '#models/notification'
-import Role from '#models/role'
 import RoomMember from '#models/room_member'
 import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import { compose } from '@adonisjs/core/helpers'
 import hash from '@adonisjs/core/services/hash'
-import { BaseModel, afterFind, belongsTo, column, computed, hasMany } from '@adonisjs/lucid/orm'
-import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
+import { BaseModel, column, hasMany, hasOne } from '@adonisjs/lucid/orm'
+import type { HasMany, HasOne } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
-import Roles from '../enums/role.js'
+import Profile from './profile.js'
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
   passwordColumnName: 'password',
 })
 
 export default class User extends compose(BaseModel, AuthFinder) {
-  @column({ isPrimary: true })
+  @column({ isPrimary: true, serializeAs: null })
   declare id: number
-
-  @column()
-  declare roleId: number
 
   @column()
   declare email: string
@@ -31,28 +26,16 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column({ serializeAs: null })
   declare password: string
 
-  @column.dateTime({ autoCreate: true })
+  @column.dateTime({ autoCreate: true, serializeAs: null })
   declare createdAt: DateTime
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  @column.dateTime({ autoCreate: true, autoUpdate: true, serializeAs: null })
   declare updatedAt: DateTime | null
 
   static accessTokens = DbAccessTokensProvider.forModel(User)
 
-  @afterFind()
-  static async getUrl(user: User) {
-    const assetInstance = new AssetsController(null, user.profilImageName)
-    const url = await assetInstance.create()
-    user.profilImageUrl = url
-  }
-
-  @computed()
-  get isAdmin() {
-    return this.roleId === Roles.ADMIN
-  }
-
-  @belongsTo(() => Role)
-  declare role: BelongsTo<typeof Role>
+  @hasOne(() => Profile)
+  declare profile: HasOne<typeof Profile>
 
   @hasMany(() => Friend, {
     localKey: 'id',

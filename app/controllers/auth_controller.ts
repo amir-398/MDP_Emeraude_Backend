@@ -1,41 +1,63 @@
 import User from '#models/user'
-import { userProfilImageValidator } from '#validators/asset'
 import { loginUserValidator } from '#validators/login_user'
 import { registerUserValidator } from '#validators/register_user'
-import { cuid } from '@adonisjs/core/helpers'
 import type { HttpContext } from '@adonisjs/core/http'
-import AssetsController from './assets_controller.js'
+import db from '@adonisjs/lucid/services/db'
+import ProfileController from './profile_controller.js'
 
 export default class AuthController {
   //register logic
   async register({ request, response }: HttpContext) {
-    // const user.related
-    const payload = await request.validateUsing(registerUserValidator)
-    const profilImage = request.file('profil_image')
-    //generate a random name for the image
+    //register logic
+    const trx = await db.transaction()
+    try {
+      const { email, password, firstname, lastname, birthdate, profilImage } =
+        await request.validateUsing(registerUserValidator)
 
-    const valideProfilImage = await userProfilImageValidator.validate({ profil_image: profilImage })
-    const profilImageName = cuid() + '.' + valideProfilImage.profil_image?.extname
+      // const file = request.file('file')
+      // console.log(file)
 
-    //upload the image to the s3 bucket
-    const uploadImageController = new AssetsController(
-      valideProfilImage.profil_image,
-      profilImageName
-    )
-    await uploadImageController.store()
+      // console.log(all?.formDataImage._parts[0][1])
 
-    const userData = { ...payload, profil_image_name: profilImageName }
-    await User.create(userData)
-    return response.status(201).json({ message: 'User created successfully' })
+      // const uploadImageController = new AssetsController(file, 'test4')
+      // const reponse = await uploadImageController.store()
+      // console.log(reponse)
+
+      // create user
+      const data = { email, password }
+      const { id } = await User.create(data, { client: trx })
+
+      // create profil
+      const userData = { firstname, lastname, profilImage, birthdate, userId: id }
+      new ProfileController().store(id, userData, trx)
+
+      // commit the transaction
+      await trx.commit()
+      return response.status(201).json({ message: 'User created successfully' })
+    } catch (error) {
+      // rollback the transaction
+      await trx.rollback()
+      return response.badRequest({ message: error.message })
+    }
   }
 
   //login logic
-  async login({ request }: HttpContext) {
-    //login logic
-    const { email, password } = await request.validateUsing(loginUserValidator)
-    const user = await User.verifyCredentials(email, password)
-    const token = await User.accessTokens.create(user)
-    return { token: token, ...user.serialize() }
+  async login({ response, request }: HttpContext) {
+    try {
+      // validate user data
+      const { email, password } = await request.validateUsing(loginUserValidator)
+
+      // verify user credentials
+      const user = await User.verifyCredentials(email, password)
+
+      // generate token
+      const token = await User.accessTokens.create(user)
+
+      // return token
+      return response.ok({ token })
+    } catch (error) {
+      return response.status(401).json({ message: error.message })
+    }
   }
 
   //logout logic

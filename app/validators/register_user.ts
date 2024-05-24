@@ -4,7 +4,6 @@ export const registerUserValidator = vine.compile(
   vine.object({
     firstname: vine.string().trim().escape(),
     lastname: vine.string().trim().escape(),
-    role_id: vine.number().optional(),
     email: vine
       .string()
       .email()
@@ -19,5 +18,6 @@ export const registerUserValidator = vine.compile(
       }),
     birthdate: vine.date(),
     password: vine.string().minLength(8).maxLength(32).escape(),
+    profilImage: vine.file({ extnames: ['jpg', 'jpeg', 'png', 'webp'], size: '5mb' }),
   })
 )
