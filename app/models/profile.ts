@@ -21,7 +21,7 @@ export default class Profile extends BaseModel {
   declare firstname: string
 
   @column()
-  declare birthdate: Date
+  declare birthDate: Date
 
   @column()
   declare profilImage: string

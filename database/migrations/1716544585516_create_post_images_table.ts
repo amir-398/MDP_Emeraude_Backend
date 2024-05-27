@@ -6,7 +6,13 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
-      table.integer('post_id').unsigned().references('id').inTable('posts')
+      table
+        .integer('post_id')
+        .unsigned()
+        .references('id')
+        .inTable('posts')
+        .onDelete('CASCADE')
+        .notNullable()
       table.string('url', 255).notNullable()
       table.integer('order').notNullable().defaultTo(0)
       table.timestamp('created_at')

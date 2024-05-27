@@ -17,28 +17,25 @@ const client = new S3Client({
 
 export default class AssetsController {
   protected file: MultipartFile | null
-  protected profilImageName: string
+  protected bucketKey: string
 
   constructor(file: MultipartFile | null, profilImageName: string) {
     this.file = file
-    this.profilImageName = profilImageName
+    this.bucketKey = profilImageName
   }
 
   async store() {
     const file = this.file
-    console.log('file', file)
-
     const stream = createReadStream(file?.tmpPath!)
     const params = {
       Bucket: bucketName || '',
-      Key: this.profilImageName,
-      contentType: file?.subtype,
+      Key: this.bucketKey,
       Body: stream,
     }
     const command = new PutObjectCommand(params)
+
     try {
-      const response = await client.send(command)
-      return response
+      await client.send(command)
     } catch (err) {
       throw err.message
     }
@@ -50,7 +47,7 @@ export default class AssetsController {
   async create() {
     const getObjectParams = {
       Bucket: bucketName || '',
-      Key: this.profilImageName,
+      Key: this.bucketKey,
     }
     const command = new GetObjectCommand(getObjectParams)
     const url = await getSignedUrl(client, command, { expiresIn: 43200 })

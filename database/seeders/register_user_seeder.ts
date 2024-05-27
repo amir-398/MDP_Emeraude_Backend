@@ -34,7 +34,7 @@ export default class extends BaseSeeder {
         firstname: 'amir',
         lastname: 'Meberbeche',
         profilImage: 'e969c50242fa5c161a9973ffb2494bad.jpg',
-        birthdate: new Date('1996-03-30'),
+        birthDate: new Date('1996-03-30'),
       },
       {
         id: 2,
@@ -42,7 +42,7 @@ export default class extends BaseSeeder {
         firstname: 'Hichem',
         lastname: 'Bennacer',
         profilImage: 'e969c50242fa5c161a9973ffb2494bad.jpg',
-        birthdate: new Date('1965-10-26'),
+        birthDate: new Date('1965-10-26'),
       },
       {
         id: 3,
@@ -50,7 +50,7 @@ export default class extends BaseSeeder {
         firstname: 'Victoria',
         lastname: 'Manceau',
         profilImage: 'e969c50242fa5c161a9973ffb2494bad.jpg',
-        birthdate: new Date('2001-10-05'),
+        birthDate: new Date('2001-10-05'),
       },
       {
         id: 4,
@@ -58,7 +58,7 @@ export default class extends BaseSeeder {
         firstname: 'Fouad',
         lastname: 'Qurai',
         profilImage: 'e969c50242fa5c161a9973ffb2494bad.jpg',
-        birthdate: new Date('1952-12-30'),
+        birthDate: new Date('1952-12-30'),
       },
     ])
   }

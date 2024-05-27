@@ -19,13 +19,13 @@ export default class Post extends BaseModel {
   declare categoryId: number
 
   @column()
-  declare subCategoryId: number | null
+  declare subCategoryId: number | undefined
 
   @column()
   declare title: string
 
   @column()
-  declare price: string
+  declare price: number
 
   @column()
   declare description: string

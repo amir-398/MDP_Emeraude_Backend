@@ -18,7 +18,7 @@ export default class extends BaseSchema {
         .notNullable()
       table.string('firstname', 255).notNullable()
       table.string('lastname', 255).notNullable()
-      table.date('birthdate').notNullable()
+      table.date('birth_date').notNullable()
       table.string('profil_image').notNullable()
       table.text('description').nullable()
       table.string('astrological_sign', 50).nullable()

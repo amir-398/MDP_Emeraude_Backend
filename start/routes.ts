@@ -22,13 +22,18 @@ router
   .group(() => {
     router.post('/register', [AuthController, 'register']).as('register')
     router.post('/login', [AuthController, 'login']).as('login')
+    router.post('/verifyEmail', [AuthController, 'verifyEmail']).as('verifyEmail')
+    router
+      .get('/verifyToken', [AuthController, 'verifyToken'])
+      .as('verifyToken')
+      .use(middleware.auth())
   })
   .prefix('/api/v1/auth')
 
 // user data routes
 router
   .group(() => {
-    router.get('/data', [ProfileController, 'show']).as('getUserData')
+    router.get('/getData', [ProfileController, 'show']).as('getUserData')
     router.put('/update', [ProfileController, 'update']).as('updateUserData')
     router
       .put('/updatePassword', [UserDataController, 'updateUserPassword'])
@@ -63,7 +68,7 @@ router
 // posts
 router
   .group(() => {
-    router.post('/post', [PostsController, 'store']).as('storePost')
+    router.post('/addPost', [PostsController, 'store']).as('storePost')
   })
   .use(middleware.auth())
   .prefix('/api/v1/posts')

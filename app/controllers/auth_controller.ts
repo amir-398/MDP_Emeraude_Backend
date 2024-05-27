@@ -1,8 +1,10 @@
 import User from '#models/user'
+import { registerUserValidator, userEmailValidator } from '#validators/auth'
 import { loginUserValidator } from '#validators/login_user'
-import { registerUserValidator } from '#validators/register_user'
+import { cuid } from '@adonisjs/core/helpers'
 import type { HttpContext } from '@adonisjs/core/http'
 import db from '@adonisjs/lucid/services/db'
+import AssetsController from './assets_controller.js'
 import ProfileController from './profile_controller.js'
 
 export default class AuthController {
@@ -11,33 +13,46 @@ export default class AuthController {
     //register logic
     const trx = await db.transaction()
     try {
-      const { email, password, firstname, lastname, birthdate, profilImage } =
+      const { firstname, lastname, email, password, birthDate, profilImage } =
         await request.validateUsing(registerUserValidator)
+      const imageId = `${cuid()}.${profilImage.subtype}`
+      const bucketKey = `profileImages/${imageId}`
 
-      // const file = request.file('file')
-      // console.log(file)
-
-      // console.log(all?.formDataImage._parts[0][1])
-
-      // const uploadImageController = new AssetsController(file, 'test4')
-      // const reponse = await uploadImageController.store()
-      // console.log(reponse)
+      // upload image to s3
+      try {
+        const uploadImageController = new AssetsController(profilImage, bucketKey)
+        await uploadImageController.store()
+      } catch (error) {
+        await trx.rollback()
+        return response.badRequest({ message: `Failed to upload image: ${error.message}` })
+      }
 
       // create user
       const data = { email, password }
       const { id } = await User.create(data, { client: trx })
 
-      // create profil
-      const userData = { firstname, lastname, profilImage, birthdate, userId: id }
-      new ProfileController().store(id, userData, trx)
+      // // create profil
+      const userData = { firstname, lastname, profilImage: imageId, birthDate, userId: id }
+      try {
+        await new ProfileController().store(id, userData, trx)
+      } catch (error) {
+        trx.rollback()
+        return response.badRequest({ message: `Failed to send Profil: ${error.message}` })
+      }
 
-      // commit the transaction
+      // // commit the transaction
       await trx.commit()
-      return response.status(201).json({ message: 'User created successfully' })
+
+      // generate token
+      const user = await User.findOrFail(id)
+      const token = await User.accessTokens.create(user)
+
+      return response.created({ message: 'User created successfully', token: token })
     } catch (error) {
       // rollback the transaction
       await trx.rollback()
-      return response.badRequest({ message: error.message })
+      console.log(error.message)
+      return response.status(401).json({ message: error.message })
     }
   }
 
@@ -56,7 +71,7 @@ export default class AuthController {
       // return token
       return response.ok({ token })
     } catch (error) {
-      return response.status(401).json({ message: error.message })
+      return response.badRequest({ message: error.message })
     }
   }
 
@@ -69,5 +84,29 @@ export default class AuthController {
     }
     await User.accessTokens.delete(user, token)
     return response.ok({ message: 'Logged out' })
+  }
+
+  // const verify if emailExist
+  async verifyEmail({ response, request }: HttpContext) {
+    const { email } = await request.validateUsing(userEmailValidator)
+    try {
+      const isUserExist = (await User.findBy('email', email)) ? true : false
+      return response.send(isUserExist)
+    } catch (error) {
+      response.badRequest({ message: 'error de vérification du mail' })
+    }
+  }
+
+  async verifyToken({ auth, response }: HttpContext) {
+    try {
+      const authcheck = await auth.check()
+      if (authcheck) {
+        return response.ok(true)
+      } else {
+        return response.status(401).json({ message: false })
+      }
+    } catch (error) {
+      return response.status(401).json({ message: false })
+    }
   }
 }

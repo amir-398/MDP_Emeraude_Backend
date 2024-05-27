@@ -1,32 +1,22 @@
 import Profile from '#models/profile'
 import { updateUserPasswordValidator, updateUserValidator } from '#validators/update_user_data'
-import { MultipartFile } from '@adonisjs/core/bodyparser'
-import { cuid } from '@adonisjs/core/helpers'
 import type { HttpContext } from '@adonisjs/core/http'
 import hash from '@adonisjs/core/services/hash'
 import db from '@adonisjs/lucid/services/db'
 import { TransactionClientContract } from '@adonisjs/lucid/types/database'
-import AssetsController from './assets_controller.js'
 
 interface UserDataProps {
   firstname: string
   lastname: string
-  birthdate: Date
-  profilImage: MultipartFile
+  birthDate: Date
+  profilImage: string
 }
 export default class ProfileController {
   async store(userId: number, userData: UserDataProps, trx: TransactionClientContract) {
     try {
-      //generate a random name for the image
-      const profilImageName = cuid() + '.' + userData.profilImage?.extname
-
-      //upload the image to the s3 bucket
-      const uploadImageController = new AssetsController(userData.profilImage, profilImageName)
-      await uploadImageController.store()
-
       //store the user data in the database
-      const data = { ...userData, profilImage: profilImageName, userId }
-      await Profile.create(data)
+      const data = { ...userData, userId }
+      await Profile.create(data, { client: trx })
     } catch (error) {
       await trx.rollback()
       throw new Error(error.message)
