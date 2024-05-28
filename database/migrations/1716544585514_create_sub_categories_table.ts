@@ -20,10 +20,10 @@ export default class extends BaseSchema {
 
     this.defer(async (db) => {
       await db.table(this.tableName).insert([
-        { category_id: 2, name: 'Sub Category 1', created_at: new Date(), updated_at: new Date() },
-        { category_id: 3, name: 'Sub Category 2', created_at: new Date(), updated_at: new Date() },
-        { category_id: 2, name: 'Sub Category 3', created_at: new Date(), updated_at: new Date() },
-        { category_id: 5, name: 'Sub Category 4', created_at: new Date(), updated_at: new Date() },
+        { id: 1, category_id: 4, name: 'Soirée', created_at: new Date(), updated_at: new Date() },
+        { id: 2, category_id: 4, name: 'Festival', created_at: new Date(), updated_at: new Date() },
+        { id: 3, category_id: 4, name: 'Carnaval', created_at: new Date(), updated_at: new Date() },
+        { id: 4, category_id: 4, name: 'Atelier', created_at: new Date(), updated_at: new Date() },
       ])
     })
   }

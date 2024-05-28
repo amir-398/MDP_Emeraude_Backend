@@ -68,6 +68,7 @@ router
 // posts
 router
   .group(() => {
+    router.get('/', [PostsController, 'index']).as('getPosts')
     router.post('/addPost', [PostsController, 'store']).as('storePost')
   })
   .use(middleware.auth())

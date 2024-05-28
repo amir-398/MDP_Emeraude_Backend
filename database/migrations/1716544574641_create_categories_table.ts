@@ -12,12 +12,11 @@ export default class extends BaseSchema {
     })
     this.defer(async (db) => {
       await db.table(this.tableName).insert([
-        { id: 1, name: 'Category 1', created_at: new Date(), updated_at: new Date() },
-        { id: 2, name: 'Category 2', created_at: new Date(), updated_at: new Date() },
-        { id: 3, name: 'Category 3', created_at: new Date(), updated_at: new Date() },
-        { id: 4, name: 'Category 4', created_at: new Date(), updated_at: new Date() },
-        { id: 5, name: 'Category 5', created_at: new Date(), updated_at: new Date() },
-        { id: 6, name: 'Category 6', created_at: new Date(), updated_at: new Date() },
+        { id: 1, name: 'Restaurant', created_at: new Date(), updated_at: new Date() },
+        { id: 2, name: 'Boutique', created_at: new Date(), updated_at: new Date() },
+        { id: 3, name: 'Pâtisserie', created_at: new Date(), updated_at: new Date() },
+        { id: 4, name: 'Evènementiel', created_at: new Date(), updated_at: new Date() },
+        { id: 5, name: 'Culturel', created_at: new Date(), updated_at: new Date() },
       ])
     })
   }

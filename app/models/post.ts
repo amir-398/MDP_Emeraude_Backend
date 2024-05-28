@@ -1,13 +1,13 @@
 import PostImage from '#models/post_image'
 import { BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
+import type { Point } from 'geojson'
 import { DateTime } from 'luxon'
 import Category from './category.js'
 import Grade from './grade.js'
 import Participant from './participant.js'
 import SubCategory from './sub_category.js'
 import User from './user.js'
-
 export default class Post extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
@@ -34,7 +34,13 @@ export default class Post extends BaseModel {
   declare location: string
 
   @column()
-  declare geoloc: string
+  declare latitude: number
+
+  @column()
+  declare longitude: number
+
+  @column()
+  declare geoloc: Point
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
