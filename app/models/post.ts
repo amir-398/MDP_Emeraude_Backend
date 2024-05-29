@@ -1,5 +1,7 @@
+import AssetsController from '#controllers/assets_controller'
 import PostImage from '#models/post_image'
-import { BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
+import { BaseModel, afterFetch, beforeFetch, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
+import type { ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import type { Point } from 'geojson'
 import { DateTime } from 'luxon'
@@ -9,16 +11,37 @@ import Participant from './participant.js'
 import SubCategory from './sub_category.js'
 import User from './user.js'
 export default class Post extends BaseModel {
+  private static async generatePresignedUrls(post: Post) {
+    const assetsController = new AssetsController()
+    await post.load('images', (query) => {
+      query.select('id', 'url').where('order', 0)
+    })
+    for (const image of post.images) {
+      if (image.url) {
+        image.url = await assetsController.create(`postImages/${image.url}`)
+      }
+    }
+  }
+
+  private static async preloadCategories(query: ModelQueryBuilderContract<typeof Post>) {
+    query.preload('category', (categoryQuery) => {
+      categoryQuery.select('id', 'name')
+    })
+    query.preload('subCategory', (subCategoryQuery) => {
+      subCategoryQuery.select('id', 'name')
+    })
+  }
+
   @column({ isPrimary: true })
   declare id: number
 
   @column()
   declare userId: number
 
-  @column()
+  @column({ serializeAs: null })
   declare categoryId: number
 
-  @column()
+  @column({ serializeAs: null })
   declare subCategoryId: number | undefined
 
   @column()
@@ -41,12 +64,22 @@ export default class Post extends BaseModel {
 
   @column()
   declare geoloc: Point
-
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
+
+  @beforeFetch()
+  static async beforeFetchHook(query: ModelQueryBuilderContract<typeof Post>) {
+    await this.preloadCategories(query)
+  }
+  @afterFetch()
+  static async afterFetchHook(posts: Post[]) {
+    for (const post of posts) {
+      await this.generatePresignedUrls(post)
+    }
+  }
 
   @hasMany(() => PostImage)
   declare images: HasMany<typeof PostImage>

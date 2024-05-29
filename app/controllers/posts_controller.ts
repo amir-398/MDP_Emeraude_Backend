@@ -6,38 +6,36 @@ import PostImagesController from './post_images_controller.js'
 
 export default class PostsController {
   async index({ response, request }: HttpContext) {
-    const { lgt, ltd } = request.qs()
-    console.log(lgt, ltd)
+    const { lgt, ltd, cat, nb } = request.qs()
 
     try {
       const posts = await Post.query()
-        .preload('images', (query) => {
-          query.select('id', 'url', 'order')
-        })
-        .preload('category', (query) => {
-          query.select('id', 'name')
-        })
-        .preload('subCategory', (query) => {
-          query.select('id', 'name')
-        })
-        .select(
-          '*',
-          db.raw(
-            'ST_DistanceSphere(geoloc::geometry,ST_SetSRID(ST_MakePoint(?,?), 4326)) AS distance',
-            [lgt, ltd]
-          )
+        .if(lgt && ltd, (query) =>
+          query
+            .select(
+              'id',
+              'title',
+              'category_id',
+              'sub_category_id',
+              'latitude',
+              'longitude',
+              db.raw(
+                'ST_DistanceSphere(posts.geoloc::geometry, ST_SetSRID(ST_MakePoint(?, ?), 4326)) AS distance',
+                [lgt, ltd]
+              )
+            )
+            .whereRaw(
+              'ST_DistanceSphere(posts.geoloc::geometry, ST_SetSRID(ST_MakePoint(?, ?), 4326)) < 5000',
+              [lgt, ltd]
+            )
+            .orderBy('distance')
         )
-
-        .whereRaw(
-          'ST_DistanceSphere(geoloc::geometry,ST_SetSRID(ST_MakePoint(?,?), 4326)) < 5000',
-          [lgt, ltd]
-        )
-        .orderBy('distance')
-      console.log(posts)
+        .if(cat, (query) => query.where('category_id', cat))
+        .if(nb, (query) => query.limit(nb))
 
       return response.ok(posts)
     } catch (error) {
-      return response.badRequest({ message: error })
+      return response.badRequest({ message: error.message })
     }
   }
 

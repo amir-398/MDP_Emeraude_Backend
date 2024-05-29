@@ -44,14 +44,18 @@ export default class AssetsController {
   /**
    * Display form to create a new record
    */
-  async create() {
-    const getObjectParams = {
-      Bucket: bucketName || '',
-      Key: this.bucketKey,
+  async create(bucketUrl: string) {
+    try {
+      const getObjectParams = {
+        Bucket: bucketName || '',
+        Key: bucketUrl,
+      }
+      const command = new GetObjectCommand(getObjectParams)
+      const url = await getSignedUrl(client, command, { expiresIn: 100000 })
+      return url
+    } catch (err) {
+      throw err.message
     }
-    const command = new GetObjectCommand(getObjectParams)
-    const url = await getSignedUrl(client, command, { expiresIn: 43200 })
-    return url
   }
 
   /**

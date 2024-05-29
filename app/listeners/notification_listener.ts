@@ -9,7 +9,5 @@ export default class NotificationListener {
     } catch (error) {
       console.log('Error:', error)
     }
-
-    // Implémentez ici la logique pour gérer la notification
   }
 }
