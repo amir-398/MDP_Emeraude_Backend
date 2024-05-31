@@ -14,17 +14,13 @@ export default class extends BaseSchema {
         .inTable('users')
         .onDelete('CASCADE')
         .notNullable()
-      table.integer('notifiable_id').unsigned().notNullable()
+      table.integer('target_id').unsigned().notNullable()
       table
-        .enu(
-          'type',
-          [
-            NotificationType.FRIENDSHIP_ACCEPTED,
-            NotificationType.FRIENDSHIP_REJECTED,
-            NotificationType.FRIENDSHIP_REQUEST,
-          ],
-          { useNative: true, enumName: 'notification_type', existingType: true }
-        )
+        .enu('target_type', [NotificationType.FRIENDSHIPS, NotificationType.MESSAGES], {
+          useNative: true,
+          enumName: 'notification_type',
+          existingType: false,
+        })
         .notNullable()
       table.timestamp('created_at')
       table.timestamp('updated_at')

@@ -1,6 +1,15 @@
 import AssetsController from '#controllers/assets_controller'
 import PostImage from '#models/post_image'
-import { BaseModel, afterFetch, beforeFetch, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
+import {
+  BaseModel,
+  afterFetch,
+  afterFind,
+  beforeFetch,
+  beforeFind,
+  belongsTo,
+  column,
+  hasMany,
+} from '@adonisjs/lucid/orm'
 import type { ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import type { Point } from 'geojson'
@@ -11,10 +20,10 @@ import Participant from './participant.js'
 import SubCategory from './sub_category.js'
 import User from './user.js'
 export default class Post extends BaseModel {
-  private static async generatePresignedUrls(post: Post) {
+  private static async generatePresignedUrls(post: Post, first: boolean) {
     const assetsController = new AssetsController()
     await post.load('images', (query) => {
-      query.select('id', 'url').where('order', 0)
+      query.select('id', 'url').if(first, (fQuery) => fQuery.where('order', 0))
     })
     for (const image of post.images) {
       if (image.url) {
@@ -77,10 +86,18 @@ export default class Post extends BaseModel {
   @afterFetch()
   static async afterFetchHook(posts: Post[]) {
     for (const post of posts) {
-      await this.generatePresignedUrls(post)
+      await this.generatePresignedUrls(post, true)
     }
   }
+  @beforeFind()
+  static async beforeFindHook(query: ModelQueryBuilderContract<typeof Post>) {
+    await this.preloadCategories(query)
+  }
 
+  @afterFind()
+  static async afterFindHook(post: Post) {
+    await this.generatePresignedUrls(post, false)
+  }
   @hasMany(() => PostImage)
   declare images: HasMany<typeof PostImage>
 

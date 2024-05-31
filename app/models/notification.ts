@@ -1,3 +1,4 @@
+import NotificationType from '#enums/notification_type'
 import Friendship from '#models/friendship'
 import User from '#models/user'
 import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
@@ -12,10 +13,10 @@ export default class Notification extends BaseModel {
   declare userId: number
 
   @column()
-  declare notifiableId: number
+  declare targetId: number
 
   @column()
-  declare type: string
+  declare targetType: NotificationType
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
@@ -26,6 +27,6 @@ export default class Notification extends BaseModel {
   @belongsTo(() => User)
   declare user: BelongsTo<typeof User>
 
-  @belongsTo(() => Friendship, { foreignKey: 'notifiableId' })
+  @belongsTo(() => Friendship, { foreignKey: 'target_id' })
   declare friendship: BelongsTo<typeof Friendship>
 }

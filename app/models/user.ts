@@ -1,3 +1,4 @@
+import Roles from '#enums/role'
 import Conversation from '#models/conversation'
 import Friend from '#models/friendship'
 import Message from '#models/message'
@@ -7,10 +8,9 @@ import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import { compose } from '@adonisjs/core/helpers'
 import hash from '@adonisjs/core/services/hash'
-import { BaseModel, column, hasMany, hasOne } from '@adonisjs/lucid/orm'
-import type { HasMany, HasOne } from '@adonisjs/lucid/types/relations'
+import { BaseModel, column, computed, hasMany } from '@adonisjs/lucid/orm'
+import type { HasMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
-import Profile from './profile.js'
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
   passwordColumnName: 'password',
@@ -26,6 +26,36 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column({ serializeAs: null })
   declare password: string
 
+  @column({ serializeAs: null })
+  declare role: string
+
+  @column()
+  declare lastname: string
+
+  @column()
+  declare firstname: string
+
+  @column()
+  declare birthDate: Date
+
+  @column()
+  declare profilImage: string
+
+  @column()
+  declare description: string | null
+
+  @column()
+  declare profession: string | null
+
+  @column()
+  declare astrologicalSign: string | null
+
+  @column()
+  declare favorite_shows: string | null
+
+  @column()
+  declare centerOfInterest: string | null
+
   @column.dateTime({ autoCreate: true, serializeAs: null })
   declare createdAt: DateTime
 
@@ -34,9 +64,10 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   static accessTokens = DbAccessTokensProvider.forModel(User)
 
-  @hasOne(() => Profile)
-  declare profile: HasOne<typeof Profile>
-
+  @computed()
+  get isAdmin() {
+    return this.role === Roles.ADMIN
+  }
   @hasMany(() => Friend, {
     localKey: 'id',
     foreignKey: 'userId1',

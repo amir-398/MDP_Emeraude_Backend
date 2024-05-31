@@ -1,5 +1,5 @@
 import { BaseSchema } from '@adonisjs/lucid/schema'
-import { default as FriendshipStatus, default as Status } from '../../app/enums/status.js'
+import { default as Status } from '../../app/enums/status.js'
 
 export default class extends BaseSchema {
   protected tableName = 'friendships'
@@ -28,7 +28,7 @@ export default class extends BaseSchema {
           enumName: 'friendship_status',
           existingType: true,
         })
-        .defaultTo(FriendshipStatus.PENDING)
+        .defaultTo(Status.PENDING)
         .notNullable()
       table.timestamp('created_at')
       table.timestamp('updated_at')

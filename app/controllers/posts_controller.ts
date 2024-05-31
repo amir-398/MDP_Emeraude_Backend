@@ -65,7 +65,15 @@ export default class PostsController {
   }
 
   async show({ response, params }: HttpContext) {
-    return response.json({ message: 'Hello World' })
+    try {
+      const { id } = params
+      const { title, description, images, category, subCategory, location, price } =
+        await Post.findOrFail(id)
+      const post = { title, description, images, category, subCategory, location, price }
+      return response.ok(post)
+    } catch (error) {
+      return response.badRequest({ message: error.message })
+    }
   }
 
   async update({ response, params, request }: HttpContext) {

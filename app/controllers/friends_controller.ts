@@ -4,7 +4,6 @@ import User from '#models/user'
 import FriendPolicy from '#policies/friendship_policy'
 import { sendInvitationValidator } from '#validators/friendship'
 import type { HttpContext } from '@adonisjs/core/http'
-import emitter from '@adonisjs/core/services/emitter'
 import db from '@adonisjs/lucid/services/db'
 import FriendshipStatus from '../enums/status.js'
 import NotificationsController from './notifications_controller.js'
@@ -41,7 +40,7 @@ export default class FriendsController {
       const notificationResult = await new NotificationsController().store(
         receiverId,
         id,
-        NotificationType.FRIENDSHIP_REQUEST,
+        NotificationType.FRIENDSHIPS,
         trx
       )
       await trx.commit()
@@ -58,7 +57,6 @@ export default class FriendsController {
   // get pending invitations
   async getPendingInvitations({ auth, response }: HttpContext) {
     try {
-      emitter.emit('user:registered', 'siii')
       const user = auth.user
       const userId = user?.id
       const pendingInvitations =
