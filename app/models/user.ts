@@ -8,7 +8,7 @@ import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import { compose } from '@adonisjs/core/helpers'
 import hash from '@adonisjs/core/services/hash'
-import { BaseModel, afterFind, column, computed, hasMany } from '@adonisjs/lucid/orm'
+import { BaseModel, afterFetch, afterFind, column, computed, hasMany } from '@adonisjs/lucid/orm'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import Comment from './comment.js'
@@ -75,15 +75,19 @@ export default class User extends compose(BaseModel, AuthFinder) {
   get isAdmin() {
     return this.role === Roles.ADMIN
   }
+  @afterFind()
+  static async afterFindHook(user: User) {
+    await this.generatePresignedUrls(user)
+  }
+  @afterFetch()
+  static async afterFetchHook(users: User[]) {
+    await Promise.all(users.map((user) => this.generatePresignedUrls(user)))
+  }
   @hasMany(() => Friend, {
     localKey: 'id',
     foreignKey: 'userId1',
   })
   declare sendedInvitations: HasMany<typeof Friend>
-  @afterFind()
-  static async afterFindHook(user: User) {
-    await this.generatePresignedUrls(user)
-  }
 
   @hasMany(() => Friend, {
     localKey: 'id',

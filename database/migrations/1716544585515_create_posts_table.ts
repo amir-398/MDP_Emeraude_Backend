@@ -17,6 +17,7 @@ export default class extends BaseSchema {
       table.specificType('geoloc', 'geography(Point, 4326)').notNullable()
       table.float('latitude').notNullable()
       table.float('longitude').notNullable()
+      table.float('grade').defaultTo(0).notNullable()
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })
