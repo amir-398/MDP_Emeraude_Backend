@@ -1,5 +1,9 @@
 import AssetsController from '#controllers/assets_controller'
+import Category from '#models/category'
+import Comment from '#models/comment'
+import Grade from '#models/grade'
 import PostImage from '#models/post_image'
+import User from '#models/user'
 import {
   BaseModel,
   afterFetch,
@@ -14,11 +18,6 @@ import type { ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import type { Point } from 'geojson'
 import { DateTime } from 'luxon'
-import Category from './category.js'
-import Grade from './grade.js'
-import Participant from './participant.js'
-import SubCategory from './sub_category.js'
-import User from './user.js'
 export default class Post extends BaseModel {
   private static async generatePresignedUrls(post: Post, first: boolean) {
     const assetsController = new AssetsController()
@@ -35,9 +34,6 @@ export default class Post extends BaseModel {
   private static async preloadCategories(query: ModelQueryBuilderContract<typeof Post>) {
     query.preload('category', (categoryQuery) => {
       categoryQuery.select('id', 'name')
-    })
-    query.preload('subCategory', (subCategoryQuery) => {
-      subCategoryQuery.select('id', 'name')
     })
   }
 
@@ -101,18 +97,15 @@ export default class Post extends BaseModel {
   @hasMany(() => PostImage)
   declare images: HasMany<typeof PostImage>
 
+  @hasMany(() => Comment)
+  declare comments: HasMany<typeof Comment>
+
   @hasMany(() => Grade)
   declare grades: HasMany<typeof Grade>
-
-  @hasMany(() => Participant)
-  declare participants: HasMany<typeof Participant>
 
   @belongsTo(() => User)
   declare user: BelongsTo<typeof User>
 
   @belongsTo(() => Category)
   declare category: BelongsTo<typeof Category>
-
-  @belongsTo(() => SubCategory)
-  declare subCategory: BelongsTo<typeof SubCategory>
 }

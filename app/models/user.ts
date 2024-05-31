@@ -1,5 +1,5 @@
+import AssetsController from '#controllers/assets_controller'
 import Roles from '#enums/role'
-import Conversation from '#models/conversation'
 import Friend from '#models/friendship'
 import Message from '#models/message'
 import Notification from '#models/notification'
@@ -8,15 +8,22 @@ import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import { compose } from '@adonisjs/core/helpers'
 import hash from '@adonisjs/core/services/hash'
-import { BaseModel, column, computed, hasMany } from '@adonisjs/lucid/orm'
+import { BaseModel, afterFind, column, computed, hasMany } from '@adonisjs/lucid/orm'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
+import Comment from './comment.js'
+
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
   passwordColumnName: 'password',
 })
 
 export default class User extends compose(BaseModel, AuthFinder) {
+  private static async generatePresignedUrls(user: User) {
+    const assetsController = new AssetsController()
+    user.profilImage = await assetsController.create(`postImages/${user.profilImage}`)
+  }
+
   @column({ isPrimary: true, serializeAs: null })
   declare id: number
 
@@ -73,24 +80,16 @@ export default class User extends compose(BaseModel, AuthFinder) {
     foreignKey: 'userId1',
   })
   declare sendedInvitations: HasMany<typeof Friend>
+  @afterFind()
+  static async afterFindHook(user: User) {
+    await this.generatePresignedUrls(user)
+  }
 
   @hasMany(() => Friend, {
     localKey: 'id',
     foreignKey: 'userId2',
   })
   declare receivedInvitations: HasMany<typeof Friend>
-
-  @hasMany(() => Conversation, {
-    localKey: 'id',
-    foreignKey: 'userId1',
-  })
-  declare conversations1: HasMany<typeof Conversation>
-
-  @hasMany(() => Conversation, {
-    localKey: 'id',
-    foreignKey: 'userId2',
-  })
-  declare conversations2: HasMany<typeof Conversation>
 
   @hasMany(() => Message)
   declare messages: HasMany<typeof Message>
@@ -100,4 +99,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   @hasMany(() => Notification)
   declare notifications: HasMany<typeof Notification>
+
+  @hasMany(() => Comment)
+  declare comments: HasMany<typeof Comment>
 }

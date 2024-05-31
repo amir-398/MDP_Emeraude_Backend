@@ -37,7 +37,7 @@ export default class extends BaseSeeder {
         id: 3,
         userId: 1,
         title: 'Musée du Louvre',
-        categoryId: 5,
+        categoryId: 2,
         price: 17,
         description:
           "Explorez l'un des plus grands et célèbres musées du monde. Abritant des milliers d'œuvres d'art, dont la Mona Lisa et la Vénus de Milo, le Louvre offre une plongée fascinante dans l'histoire de l'art à travers les âges. Idéal pour les amateurs d'art et les curieux.",
@@ -50,7 +50,7 @@ export default class extends BaseSeeder {
         id: 4,
         userId: 1,
         title: 'La Boutique de Chocolat',
-        categoryId: 5,
+        categoryId: 3,
         price: 15,
         description:
           'Dégustez des chocolats artisanaux dans cette boutique renommée, connue pour ses créations uniques et ses saveurs exquises. Parfait pour les gourmands et ceux qui souhaitent offrir un cadeau délicieux à leurs proches.',
@@ -65,7 +65,7 @@ export default class extends BaseSeeder {
         id: 5,
         userId: 1,
         title: 'Pâtisserie Pierre Hermé',
-        categoryId: 5,
+        categoryId: 2,
         price: 17,
         description:
           "Découvrez les macarons et pâtisseries raffinées de Pierre Hermé, célèbre pour ses créations innovantes et ses saveurs délicates. Un incontournable pour les amateurs de pâtisserie fine à la recherche de l'excellence culinaire.",
@@ -78,7 +78,7 @@ export default class extends BaseSeeder {
         id: 6,
         userId: 1,
         title: 'Palais Garnier',
-        categoryId: 5,
+        categoryId: 1,
         price: 14,
         description:
           "Visitez l'opéra historique de Paris avec son architecture magnifique, ses plafonds peints par Chagall, et ses escaliers majestueux. Assistez à une représentation ou profitez d'une visite guidée pour découvrir ce chef-d'œuvre architectural.",
@@ -91,8 +91,7 @@ export default class extends BaseSeeder {
         id: 7,
         userId: 1,
         title: 'Carnaval de Nice',
-        categoryId: 4,
-        subCategoryId: 2,
+        categoryId: 2,
         price: 0,
         description:
           'Un des plus grands carnavals de France avec des défilés spectaculaires, des chars magnifiquement décorés, et des batailles de fleurs. Une expérience inoubliable pour tous les âges, célébrant la joie et la culture locale.',
@@ -107,8 +106,7 @@ export default class extends BaseSeeder {
         title: 'Soirée Électro au Rex Club',
         description:
           'Dansez toute la nuit au son de la musique électro dans ce club iconique de Paris, accueillant des DJ de renommée mondiale. Une destination prisée par les amateurs de musique électronique et les fêtards.',
-        categoryId: 4,
-        subCategoryId: 1,
+        categoryId: 3,
         price: 20,
         location: '5 Boulevard Poissonnière, 75002 Paris, France',
         geoloc: db.raw(

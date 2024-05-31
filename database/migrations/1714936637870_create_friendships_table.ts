@@ -36,7 +36,7 @@ export default class extends BaseSchema {
   }
 
   async down() {
-    this.schema.raw('DROP TYPE IF EXISTS "friendship_status"')
+    this.schema.raw('DROP TYPE IF EXISTS friendship_status')
     this.schema.dropTable(this.tableName)
   }
 }

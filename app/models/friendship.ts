@@ -1,3 +1,4 @@
+import Status from '#enums/status'
 import Notification from '#models/notification'
 import User from '#models/user'
 import { BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
@@ -15,7 +16,7 @@ export default class Friendship extends BaseModel {
   declare userId2: number
 
   @column()
-  declare status: string
+  declare status: Status.ACCEPTED | Status.PENDING | Status.REJECTED
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
@@ -29,6 +30,6 @@ export default class Friendship extends BaseModel {
   @belongsTo(() => User, { foreignKey: 'userId2' })
   declare receiverData: BelongsTo<typeof User>
 
-  @hasMany(() => Notification, { foreignKey: 'notifiableId' })
+  @hasMany(() => Notification, { foreignKey: 'targetId' })
   declare notifications: HasMany<typeof Notification>
 }

@@ -27,6 +27,6 @@ export default class Notification extends BaseModel {
   @belongsTo(() => User)
   declare user: BelongsTo<typeof User>
 
-  @belongsTo(() => Friendship, { foreignKey: 'target_id' })
+  @belongsTo(() => Friendship)
   declare friendship: BelongsTo<typeof Friendship>
 }

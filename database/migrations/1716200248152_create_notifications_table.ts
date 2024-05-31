@@ -19,7 +19,7 @@ export default class extends BaseSchema {
         .enu('target_type', [NotificationType.FRIENDSHIPS, NotificationType.MESSAGES], {
           useNative: true,
           enumName: 'notification_type',
-          existingType: false,
+          existingType: true,
         })
         .notNullable()
       table.timestamp('created_at')
@@ -28,7 +28,7 @@ export default class extends BaseSchema {
   }
 
   async down() {
-    this.schema.raw('DROP TYPE IF EXISTS "notification_type"')
+    this.schema.raw('DROP TYPE IF EXISTS notification_type')
     this.schema.dropTable(this.tableName)
   }
 }

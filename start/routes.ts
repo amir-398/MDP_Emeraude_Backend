@@ -6,16 +6,18 @@
 | The routes file is used for defining the HTTP routes.
 |
 */
-const ProfileController = () => import('#controllers/profile_controller')
+
 const PostsController = () => import('#controllers/posts_controller')
 const CategoriesController = () => import('#controllers/categories_controller')
+const CommentsController = () => import('#controllers/comments_controller')
+const GradesController = () => import('#controllers/grades_controller')
 import { middleware } from '#start/kernel'
 import router from '@adonisjs/core/services/router'
 const RoomsController = () => import('#controllers/rooms_controller')
 const MessagesController = () => import('#controllers/messages_controller')
 
 const AuthController = () => import('#controllers/auth_controller')
-const UserDataController = () => import('#controllers/profile_controller')
+const UserDataController = () => import('#controllers/user_data_controller')
 const FriendsController = () => import('#controllers/friends_controller')
 
 // auth login register routes
@@ -34,8 +36,8 @@ router
 // user data routes
 router
   .group(() => {
-    router.get('/getData', [ProfileController, 'show']).as('getUserData')
-    router.put('/update', [ProfileController, 'update']).as('updateUserData')
+    router.get('/getData', [UserDataController, 'show']).as('getUserData')
+    router.put('/update', [UserDataController, 'update']).as('updateUserData')
     router
       .put('/updatePassword', [UserDataController, 'updateUserPassword'])
       .as('updateUserPassword')
@@ -76,6 +78,21 @@ router
   .use(middleware.auth())
   .prefix('/api/v1/posts')
 
+// comments
+router
+  .group(() => {
+    router.post('/addComment/:postId', [CommentsController, 'store']).as('addComment')
+  })
+  .use(middleware.auth())
+  .prefix('/api/v1/comments')
+
+// grades
+router
+  .group(() => {
+    router.post('/addGrade/:postId', [GradesController, 'store']).as('addGrade')
+  })
+  .use(middleware.auth())
+  .prefix('/api/v1/grades')
 // categories
 router
   .group(() => {

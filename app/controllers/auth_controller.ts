@@ -5,7 +5,6 @@ import { cuid } from '@adonisjs/core/helpers'
 import type { HttpContext } from '@adonisjs/core/http'
 import db from '@adonisjs/lucid/services/db'
 import AssetsController from './assets_controller.js'
-import ProfileController from './profile_controller.js'
 
 export default class AuthController {
   //register logic
@@ -13,11 +12,11 @@ export default class AuthController {
     //register logic
     const trx = await db.transaction()
     try {
-      const { firstname, lastname, email, password, birthDate, profilImage } =
-        await request.validateUsing(registerUserValidator)
+      const payload = await request.validateUsing(registerUserValidator)
+      const profilImage = payload.profilImage
       const imageId = `${cuid()}.${profilImage.subtype}`
       const bucketKey = `profileImages/${imageId}`
-
+      const data = { ...payload, profilImage: imageId }
       // upload image to s3
       try {
         const uploadImageController = new AssetsController(profilImage, bucketKey)
@@ -28,17 +27,7 @@ export default class AuthController {
       }
 
       // create user
-      const data = { email, password }
       const { id } = await User.create(data, { client: trx })
-
-      // // create profil
-      const userData = { firstname, lastname, profilImage: imageId, birthDate, userId: id }
-      try {
-        await new ProfileController().store(id, userData, trx)
-      } catch (error) {
-        trx.rollback()
-        return response.badRequest({ message: `Failed to send Profil: ${error.message}` })
-      }
 
       // // commit the transaction
       await trx.commit()
@@ -52,7 +41,7 @@ export default class AuthController {
       // rollback the transaction
       await trx.rollback()
       console.log(error.message)
-      return response.status(401).json({ message: error.message })
+      return response.status(401).json({ message: error })
     }
   }
 

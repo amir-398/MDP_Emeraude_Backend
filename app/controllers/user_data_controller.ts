@@ -1,9 +1,8 @@
-import Profile from '#models/profile'
+import User from '#models/user'
 import { updateUserPasswordValidator, updateUserValidator } from '#validators/update_user_data'
 import type { HttpContext } from '@adonisjs/core/http'
 import hash from '@adonisjs/core/services/hash'
 import db from '@adonisjs/lucid/services/db'
-import { TransactionClientContract } from '@adonisjs/lucid/types/database'
 
 interface UserDataProps {
   firstname: string
@@ -11,27 +10,15 @@ interface UserDataProps {
   birthDate: Date
   profilImage: string
 }
-export default class ProfileController {
-  async store(userId: number, userData: UserDataProps, trx: TransactionClientContract) {
-    try {
-      //store the user data in the database
-      const data = { ...userData, userId }
-      await Profile.create(data, { client: trx })
-    } catch (error) {
-      await trx.rollback()
-      throw new Error(error.message)
-    }
-  }
+export default class UserDataController {
   // get user data
-
   async show({ auth, response }: HttpContext) {
     try {
       const user = auth.user
-      const userData = await Profile.findBy('userId', user?.id)
       if (!user) {
         return response.status(401).json({ message: 'Unauthorized' })
       }
-      return response.status(200).json(userData)
+      return response.status(200).json(user)
     } catch (error) {
       return response.status(401).json({ message: error.message || 'Unauthorized' })
     }
@@ -42,7 +29,7 @@ export default class ProfileController {
     try {
       const payload = await request.validateUsing(updateUserValidator)
       const user = auth.user?.id
-      const userProfil = await Profile.findBy('userId', user)
+      const userProfil = await User.findBy('userId', user)
       await userProfil?.merge(payload).save()
       return response.status(200).json({ message: 'User data updated successfully' })
     } catch (error) {

@@ -67,9 +67,8 @@ export default class PostsController {
   async show({ response, params }: HttpContext) {
     try {
       const { id } = params
-      const { title, description, images, category, subCategory, location, price } =
-        await Post.findOrFail(id)
-      const post = { title, description, images, category, subCategory, location, price }
+      const { title, description, images, category, location, price } = await Post.findOrFail(id)
+      const post = { title, description, images, category, location, price }
       return response.ok(post)
     } catch (error) {
       return response.badRequest({ message: error.message })

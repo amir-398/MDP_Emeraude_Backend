@@ -10,11 +10,15 @@ export default class extends BaseSchema {
       table.integer('room_id').unsigned().references('id').inTable('rooms').notNullable()
       table.integer('user_id').unsigned().references('id').inTable('users').notNullable()
       table
-        .enu('role', [RoomMembersRole.MEMBER, RoomMembersRole.MODERATOR, RoomMembersRole.ADMIN], {
-          useNative: true,
-          enumName: 'room_members_role',
-          existingType: true,
-        })
+        .enu(
+          'member_role',
+          [RoomMembersRole.MEMBER, RoomMembersRole.MODERATOR, RoomMembersRole.ADMIN],
+          {
+            useNative: true,
+            enumName: 'room_members_role',
+            existingType: true,
+          }
+        )
         .defaultTo(RoomMembersRole.MEMBER)
         .notNullable()
       table.timestamp('created_at')
@@ -23,7 +27,7 @@ export default class extends BaseSchema {
   }
 
   async down() {
-    this.schema.raw('DROP TYPE IF EXISTS "room_members_role"')
+    this.schema.raw('DROP TYPE IF EXISTS room_members_role')
     this.schema.dropTable(this.tableName)
   }
 }

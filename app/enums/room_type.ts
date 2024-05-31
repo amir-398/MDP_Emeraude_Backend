@@ -1,6 +1,6 @@
 enum RoomType {
   PRIVATE = 'private',
-  PUBLIC = 'public',
+  GROUP = 'group',
 }
 
 export default RoomType

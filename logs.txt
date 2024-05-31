@@ -3,4 +3,3 @@ DB_PORT=5432
 DB_USER=frienddly_user
 DB_PASSWORD=lRbupRrcxLJk65xCACKQc3puTW3mo2yY
 DB_DATABASE=frienddly
-BUCKET_NAME=frienddly

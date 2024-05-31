@@ -1,12 +1,14 @@
-import SubCategory from '#models/sub_category'
+import Post from '#models/post'
 import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
-import Post from './post.js'
 
 export default class Category extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
+
+  @column()
+  declare parentCategoryId: number | null
 
   @column()
   declare name: string
@@ -17,9 +19,9 @@ export default class Category extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true, serializeAs: null })
   declare updatedAt: DateTime
 
-  @hasMany(() => SubCategory)
-  declare subCategories: HasMany<typeof SubCategory>
-
   @hasMany(() => Post)
   declare posts: HasMany<typeof Post>
+
+  @hasMany(() => Category, { foreignKey: 'parentCategoryId' })
+  declare subCategories: HasMany<typeof Category>
 }

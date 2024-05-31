@@ -1,4 +1,6 @@
 import RoomType from '#enums/room_type'
+import RoomVisibility from '#enums/room_visibility'
+import Message from '#models/message'
 import RoomMember from '#models/room_member'
 import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
@@ -9,10 +11,13 @@ export default class Room extends BaseModel {
   declare id: number
 
   @column()
-  declare name: string
+  declare name: string | null
 
   @column()
-  declare roomType: RoomType.PUBLIC | RoomType.PRIVATE
+  declare roomType: RoomType.GROUP | RoomType.PRIVATE
+
+  @column()
+  declare visibility: RoomVisibility.PUBLIC | RoomVisibility.PRIVATE
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
@@ -22,4 +27,7 @@ export default class Room extends BaseModel {
 
   @hasMany(() => RoomMember)
   declare members: HasMany<typeof RoomMember>
+
+  @hasMany(() => Message)
+  declare messages: HasMany<typeof Message>
 }

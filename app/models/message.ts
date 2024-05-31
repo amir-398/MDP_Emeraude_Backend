@@ -3,7 +3,6 @@ import User from '#models/user'
 import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
-import Conversation from './conversation.js'
 
 export default class Message extends BaseModel {
   @column({ isPrimary: true })
@@ -13,16 +12,10 @@ export default class Message extends BaseModel {
   declare userId: number
 
   @column()
-  declare conversationId: number
-
-  @column()
   declare roomId: number
 
   @column()
-  declare message: string
-
-  @column()
-  declare is_read: boolean
+  declare content: string
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
@@ -32,9 +25,6 @@ export default class Message extends BaseModel {
 
   @belongsTo(() => User)
   declare user: BelongsTo<typeof User>
-
-  @belongsTo(() => Conversation)
-  declare conversation: BelongsTo<typeof Conversation>
 
   @belongsTo(() => Room)
   declare room: BelongsTo<typeof Room>

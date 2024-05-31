@@ -1,34 +1,28 @@
+import Comment from '#models/comment'
+import Post from '#models/post'
+import { postCommentValidator, postIdParamValidator } from '#validators/comment'
 import type { HttpContext } from '@adonisjs/core/http'
 
-import Grade from '#models/grade'
-import Post from '#models/post'
-import { postGradeController, postIdParamValidator } from '#validators/grade'
-
-export default class GradesController {
+export default class CommentsController {
   async store({ auth, response, request, params }: HttpContext) {
     try {
-      const payload = await request.validateUsing(postGradeController)
+      const payload = await request.validateUsing(postCommentValidator)
       const userId = auth.user?.id
       const { postId } = params
-
-      // verify if the postId is a number
       const postIdValidated = await postIdParamValidator.validate({ postId })
-
-      // check if post exists
       const postExists = (await Post.find(postId)) ? true : false
-
       if (!postExists) {
         return response.notFound({ message: `Post with id ${postId} not found` })
       }
       // create comment
-      await Grade.create({
+      await Comment.create({
         userId,
         postId: postIdValidated.postId,
         ...payload,
       })
-      return response.created({ message: 'grade created successfully' })
+      return response.created({ message: 'Comment created successfully' })
     } catch (error) {
-      return response.badRequest({ message: `Failed to create grade: ${error.message}` })
+      return response.badRequest({ message: `Failed to create comment: ${error.message}` })
     }
   }
 }

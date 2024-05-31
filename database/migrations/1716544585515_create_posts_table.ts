@@ -10,12 +10,6 @@ export default class extends BaseSchema {
       table.increments('id')
       table.integer('user_id').unsigned().references('id').inTable('users').notNullable()
       table.integer('category_id').unsigned().references('id').inTable('categories').notNullable()
-      table
-        .integer('sub_category_id')
-        .unsigned()
-        .references('id')
-        .inTable('sub_categories')
-        .nullable()
       table.string('title', 255).notNullable()
       table.string('price', 255).notNullable()
       table.text('description').notNullable()

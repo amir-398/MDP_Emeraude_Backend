@@ -6,6 +6,13 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
+      table
+        .integer('parent_category_id')
+        .unsigned()
+        .nullable()
+        .references('id')
+        .inTable('categories')
+        .onDelete('CASCADE')
       table.string('name', 255).notNullable()
       table.timestamp('created_at')
       table.timestamp('updated_at')
@@ -13,10 +20,8 @@ export default class extends BaseSchema {
     this.defer(async (db) => {
       await db.table(this.tableName).insert([
         { id: 1, name: 'Restaurant', created_at: new Date(), updated_at: new Date() },
-        { id: 2, name: 'Boutique', created_at: new Date(), updated_at: new Date() },
-        { id: 3, name: 'Pâtisserie', created_at: new Date(), updated_at: new Date() },
-        { id: 4, name: 'Evènementiel', created_at: new Date(), updated_at: new Date() },
-        { id: 5, name: 'Culturel', created_at: new Date(), updated_at: new Date() },
+        { id: 2, name: 'Soirée', created_at: new Date(), updated_at: new Date() },
+        { id: 3, name: 'Supermarché', created_at: new Date(), updated_at: new Date() },
       ])
     })
   }
