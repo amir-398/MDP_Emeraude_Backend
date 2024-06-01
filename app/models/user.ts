@@ -21,7 +21,7 @@ const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
 export default class User extends compose(BaseModel, AuthFinder) {
   private static async generatePresignedUrls(user: User) {
     const assetsController = new AssetsController()
-    user.profilImage = await assetsController.create(`postImages/${user.profilImage}`)
+    user.profilImage = await assetsController.create(`profileImages/${user.profilImage}`)
   }
 
   @column({ isPrimary: true, serializeAs: null })

@@ -73,7 +73,6 @@ export default class FriendsController {
   }
   // get friends
   async getFriends({ auth, response }: HttpContext) {
-    const limit = 5
     try {
       const user = auth.getUserOrFail()
       if (!user) {

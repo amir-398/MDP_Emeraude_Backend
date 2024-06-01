@@ -16,7 +16,6 @@ export default class PostsController {
               'id',
               'title',
               'category_id',
-              'sub_category_id',
               'latitude',
               'longitude',
               db.raw(
@@ -67,9 +66,19 @@ export default class PostsController {
   async show({ response, params }: HttpContext) {
     try {
       const { id } = params
-      const { title, description, images, category, location, price, comments, grades } =
+      const { title, description, images, category, location, price, comments, grades, grade } =
         await Post.findOrFail(id)
-      const post = { title, description, images, category, location, price, comments, grades }
+      const post = {
+        title,
+        description,
+        images,
+        category,
+        location,
+        price,
+        comments,
+        grades,
+        grade,
+      }
       return response.ok(post)
     } catch (error) {
       return response.badRequest({ message: error.message })
