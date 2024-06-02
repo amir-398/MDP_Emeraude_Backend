@@ -5,32 +5,45 @@ import db from '@adonisjs/lucid/services/db'
 import PostImagesController from './post_images_controller.js'
 
 export default class PostsController {
-  async index({ response, request }: HttpContext) {
+  async index({ request, response }: HttpContext) {
     const { lgt, ltd, cat, nb } = request.qs()
 
     try {
-      const posts = await Post.query()
-        .if(lgt && ltd, (query) =>
-          query
-            .select(
-              'id',
-              'title',
-              'category_id',
-              'latitude',
-              'longitude',
-              db.raw(
-                'ST_DistanceSphere(posts.geoloc::geometry, ST_SetSRID(ST_MakePoint(?, ?), 4326)) AS distance',
-                [lgt, ltd]
-              )
-            )
-            .whereRaw(
-              'ST_DistanceSphere(posts.geoloc::geometry, ST_SetSRID(ST_MakePoint(?, ?), 4326)) < 5000',
+      const postsQuery = Post.query().select(
+        'id',
+        'title',
+        'category_id',
+        'latitude',
+        'longitude',
+        'grade',
+        'price',
+        'location'
+      )
+
+      if (lgt && ltd) {
+        postsQuery
+          .select(
+            db.raw(
+              'ST_DistanceSphere(posts.geoloc::geometry, ST_SetSRID(ST_MakePoint(?, ?), 4326)) AS distance',
               [lgt, ltd]
             )
-            .orderBy('distance')
-        )
-        .if(cat, (query) => query.where('category_id', cat))
-        .if(nb, (query) => query.limit(nb))
+          )
+          .whereRaw(
+            'ST_DistanceSphere(posts.geoloc::geometry, ST_SetSRID(ST_MakePoint(?, ?), 4326)) < 5000',
+            [lgt, ltd]
+          )
+          .orderBy('distance')
+      }
+
+      if (cat) {
+        postsQuery.where('category_id', cat)
+      }
+
+      if (nb) {
+        postsQuery.limit(nb)
+      }
+
+      const posts = await postsQuery
 
       return response.ok(posts)
     } catch (error) {

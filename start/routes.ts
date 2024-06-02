@@ -37,6 +37,9 @@ router
 router
   .group(() => {
     router.get('/getData', [UserDataController, 'show']).as('getUserData')
+    router
+      .post('/getUserProfilImage', [UserDataController, 'getProfilImage'])
+      .as('getUserProfilImage')
     router.put('/update', [UserDataController, 'update']).as('updateUserData')
     router
       .put('/updatePassword', [UserDataController, 'updateUserPassword'])
@@ -68,31 +71,17 @@ router
   .use(middleware.auth())
   .prefix('/api/v1/rooms')
 
-// posts
+// posts & comments
 router
   .group(() => {
-    router.get('/', [PostsController, 'index']).as('getPosts')
+    router.get('', [PostsController, 'index']).as('getPosts')
     router.get('/:id', [PostsController, 'show']).as('getPost')
     router.post('/addPost', [PostsController, 'store']).as('storePost')
+    router.post('/:postId/addComment', [CommentsController, 'store']).as('addComment')
+    router.post('/:postId/addGrade', [GradesController, 'store']).as('addGrade')
   })
   .use(middleware.auth())
   .prefix('/api/v1/posts')
-
-// comments
-router
-  .group(() => {
-    router.post('/addComment/:postId', [CommentsController, 'store']).as('addComment')
-  })
-  .use(middleware.auth())
-  .prefix('/api/v1/comments')
-
-// grades
-router
-  .group(() => {
-    router.post('/addGrade/:postId', [GradesController, 'store']).as('addGrade')
-  })
-  .use(middleware.auth())
-  .prefix('/api/v1/grades')
 // categories
 router
   .group(() => {

@@ -10,9 +10,22 @@ export default class CommentsController {
       const userId = auth.user?.id
       const { postId } = params
       const postIdValidated = await postIdParamValidator.validate({ postId })
+
+      // check if post exists
       const postExists = (await Post.find(postId)) ? true : false
       if (!postExists) {
         return response.notFound({ message: `Post with id ${postId} not found` })
+      }
+
+      // check if comment already exists
+      const commentExists =
+        userId &&
+        (await Comment.query()
+          .where('userId', userId)
+          .where('postId', postIdValidated.postId)
+          .first())
+      if (commentExists) {
+        return response.badRequest({ message: 'Comment already exists' })
       }
       // create comment
       await Comment.create({

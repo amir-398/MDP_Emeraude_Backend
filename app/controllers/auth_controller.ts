@@ -47,6 +47,8 @@ export default class AuthController {
 
   //login logic
   async login({ response, request }: HttpContext) {
+    console.log('login')
+
     try {
       // validate user data
       const { email, password } = await request.validateUsing(loginUserValidator)

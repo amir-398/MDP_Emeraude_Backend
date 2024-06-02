@@ -11,7 +11,7 @@ export default class extends BaseSchema {
       table.integer('user_id').unsigned().references('id').inTable('users').notNullable()
       table.integer('category_id').unsigned().references('id').inTable('categories').notNullable()
       table.string('title', 255).notNullable()
-      table.string('price', 255).notNullable()
+      table.integer('price', 255).notNullable()
       table.text('description').notNullable()
       table.string('location', 255).notNullable()
       table.specificType('geoloc', 'geography(Point, 4326)').notNullable()

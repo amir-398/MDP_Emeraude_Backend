@@ -2,12 +2,12 @@ import NotificationType from '#enums/notification_type'
 import Friendship from '#models/friendship'
 import User from '#models/user'
 import FriendPolicy from '#policies/friendship_policy'
+import streamClient from '#start/stream'
 import { sendInvitationValidator } from '#validators/friendship'
 import type { HttpContext } from '@adonisjs/core/http'
 import db from '@adonisjs/lucid/services/db'
 import FriendshipStatus from '../enums/status.js'
 import NotificationsController from './notifications_controller.js'
-
 export default class FriendsController {
   // send an invitation
   async sendInvitation({ params, response, auth }: HttpContext) {
@@ -117,8 +117,12 @@ export default class FriendsController {
 
       friend.status = FriendshipStatus.ACCEPTED
       friend.save()
-
-      return response.status(200).json({ message: 'Invitation accepted' })
+      const channel = streamClient.channel('messaging', 'user' + friend.userId1 + friend.userId2, {
+        members: [friend.userId1.toString(), friend.userId2.toString()],
+        created_by_id: friend.userId1.toString(),
+      })
+      await channel.create()
+      return response.status(200).json({ message: 'Invitation accepted et channel crée' })
     } catch (error) {
       return response.status(401).json({ message: error.message || 'Unauthorized' })
     }

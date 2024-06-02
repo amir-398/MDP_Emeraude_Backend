@@ -18,9 +18,9 @@ export default class UserDataController {
       if (!user) {
         return response.status(401).json({ message: 'Unauthorized' })
       }
-      return response.status(200).json(user)
+      return response.ok(user)
     } catch (error) {
-      return response.status(401).json({ message: error.message || 'Unauthorized' })
+      return response.badRequest({ message: error.message || 'Unauthorized' })
     }
   }
 
@@ -61,6 +61,17 @@ export default class UserDataController {
       return response.status(200).json({ message: 'User password updated successfully' })
     } catch (error) {
       return response.status(401).json({ message: 'Unauthorized' })
+    }
+  }
+
+  async getProfilImage({ response, request }: HttpContext) {
+    try {
+      const { userId } = request.all()
+      const userData = await User.find(userId)
+      const userImage = userData?.profilImage
+      return response.ok(userImage)
+    } catch (error) {
+      return response.badRequest({ message: 'Unauthorized' })
     }
   }
 }

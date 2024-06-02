@@ -24,7 +24,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
     user.profilImage = await assetsController.create(`profileImages/${user.profilImage}`)
   }
 
-  @column({ isPrimary: true, serializeAs: null })
+  @column({ isPrimary: true })
   declare id: number
 
   @column()

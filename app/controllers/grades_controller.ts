@@ -10,7 +10,6 @@ export default class GradesController {
     const trx = await db.transaction()
     try {
       const payload = await request.validateUsing(postGradeController)
-
       const { postId } = params
       // verify if the postId is a number
       const postIdValidated = await postIdParamValidator.validate({ postId })
@@ -22,7 +21,6 @@ export default class GradesController {
       const postExists = await Post.find(postId)
 
       if (!postExists) {
-        await trx.rollback()
         return response.notFound({ message: `Post with id ${postId} not found` })
       }
 
@@ -35,7 +33,6 @@ export default class GradesController {
           .first())
 
       if (userGraded) {
-        await trx.rollback()
         return response.badRequest({ message: 'User already graded this post' })
       }
 
@@ -51,13 +48,13 @@ export default class GradesController {
 
       // add grade in the table
       const oldGrade = postExists.grade
-      const newGrade = (oldGrade + payload.grade) / 2
-      postExists.merge({ grade: Number(newGrade.toFixed(2)) })
+      const newGrade = oldGrade === 0 ? payload.grade : (oldGrade + payload.grade) / 2
       postExists.useTransaction(trx)
+      postExists.merge({ grade: Number(newGrade.toFixed(2)) })
+      await postExists.save()
 
       // save the new grade
       trx.commit()
-      await postExists.save()
       return response.created({ message: 'grade created successfully' })
     } catch (error) {
       await trx.rollback()
