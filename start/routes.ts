@@ -11,6 +11,7 @@ const PostsController = () => import('#controllers/posts_controller')
 const CategoriesController = () => import('#controllers/categories_controller')
 const CommentsController = () => import('#controllers/comments_controller')
 const GradesController = () => import('#controllers/grades_controller')
+const ChatSteamsController = () => import('#controllers/chat_steams_controller')
 import { middleware } from '#start/kernel'
 import router from '@adonisjs/core/services/router'
 const RoomsController = () => import('#controllers/rooms_controller')
@@ -64,6 +65,7 @@ router
 router
   .group(() => {
     router.post('/create', [RoomsController, 'create'])
+    router.post('/createGroup', [ChatSteamsController, 'createGroupChannel'])
     router.get('/rooms', [RoomsController, 'index'])
     router.get('/rooms/:id', [RoomsController, 'show'])
     router.put('/:id', [RoomsController, 'update'])

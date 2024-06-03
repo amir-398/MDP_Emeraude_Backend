@@ -1,10 +1,12 @@
+import AssetsController from '#controllers/assets_controller'
+import ChatSteamsController from '#controllers/chat_steams_controller'
 import User from '#models/user'
+import streamClient from '#start/stream'
 import { registerUserValidator, userEmailValidator } from '#validators/auth'
 import { loginUserValidator } from '#validators/login_user'
 import { cuid } from '@adonisjs/core/helpers'
 import type { HttpContext } from '@adonisjs/core/http'
 import db from '@adonisjs/lucid/services/db'
-import AssetsController from './assets_controller.js'
 
 export default class AuthController {
   //register logic
@@ -13,6 +15,7 @@ export default class AuthController {
     const trx = await db.transaction()
     try {
       const payload = await request.validateUsing(registerUserValidator)
+      const chatStreamController = new ChatSteamsController()
       const profilImage = payload.profilImage
       const imageId = `${cuid()}.${profilImage.subtype}`
       const bucketKey = `profileImages/${imageId}`
@@ -35,8 +38,12 @@ export default class AuthController {
       // generate token
       const user = await User.findOrFail(id)
       const token = await User.accessTokens.create(user)
-
-      return response.created({ message: 'User created successfully', token: token })
+      const streamToken = await chatStreamController.storeUser(
+        user.id,
+        user.firstname,
+        user.lastname
+      )
+      return response.created({ token: token, streamToken: streamToken })
     } catch (error) {
       // rollback the transaction
       await trx.rollback()
@@ -47,8 +54,6 @@ export default class AuthController {
 
   //login logic
   async login({ response, request }: HttpContext) {
-    console.log('login')
-
     try {
       // validate user data
       const { email, password } = await request.validateUsing(loginUserValidator)
@@ -59,8 +64,10 @@ export default class AuthController {
       // generate token
       const token = await User.accessTokens.create(user)
 
+      const streamToken = streamClient.createToken(user.id.toString())
+
       // return token
-      return response.ok({ token })
+      return response.ok({ token: token, streamToken: streamToken })
     } catch (error) {
       return response.badRequest({ message: error.message })
     }
