@@ -12,6 +12,7 @@ const CategoriesController = () => import('#controllers/categories_controller')
 const CommentsController = () => import('#controllers/comments_controller')
 const GradesController = () => import('#controllers/grades_controller')
 const ChatSteamsController = () => import('#controllers/chat_steams_controller')
+const NotificationsController = () => import('#controllers/notifications_controller')
 import { middleware } from '#start/kernel'
 import router from '@adonisjs/core/services/router'
 const RoomsController = () => import('#controllers/rooms_controller')
@@ -84,6 +85,7 @@ router
   })
   .use(middleware.auth())
   .prefix('/api/v1/posts')
+
 // categories
 router
   .group(() => {
@@ -91,3 +93,11 @@ router
   })
   .use(middleware.auth())
   .prefix('/api/v1/categories')
+
+// notifications
+router
+  .group(() => {
+    router.get('/', [NotificationsController, 'index'])
+  })
+  .use(middleware.auth())
+  .prefix('/api/v1/notifications')

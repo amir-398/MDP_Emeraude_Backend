@@ -1,7 +1,8 @@
 import Status from '#enums/status'
 import Notification from '#models/notification'
 import User from '#models/user'
-import { BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
+import { BaseModel, beforeFetch, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
+import type { ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 
@@ -32,4 +33,11 @@ export default class Friendship extends BaseModel {
 
   @hasMany(() => Notification, { foreignKey: 'targetId' })
   declare notifications: HasMany<typeof Notification>
+
+  @beforeFetch()
+  static async preloadUser(query: ModelQueryBuilderContract<typeof Friendship>) {
+    query.preload('senderData', (senderQuery) => {
+      senderQuery.select('id', 'firstname', 'lastname', 'profilImage')
+    })
+  }
 }
