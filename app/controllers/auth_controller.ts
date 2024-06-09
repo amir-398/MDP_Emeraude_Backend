@@ -22,8 +22,8 @@ export default class AuthController {
       const data = { ...payload, profilImage: imageId }
       // upload image to s3
       try {
-        const uploadImageController = new AssetsController(profilImage, bucketKey)
-        await uploadImageController.store()
+        const uploadImageController = new AssetsController()
+        await uploadImageController.store(profilImage, bucketKey)
       } catch (error) {
         await trx.rollback()
         return response.badRequest({ message: `Failed to upload image: ${error.message}` })

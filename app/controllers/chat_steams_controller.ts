@@ -27,9 +27,10 @@ export default class ChatSteamsController {
       if (!user) return response.badRequest({ message: 'Unauthorized' })
 
       const { name, image } = await request.validateUsing(createGroupChannelValidator)
-      const imageName = `${cuid()}.${image.extname}`
-      const AssetsControllerInstance = new AssetsController(image, imageName)
-      await AssetsControllerInstance.store()
+      const imageName = `${cuid()}.${image.subtype}`
+      const bucketKey = `groupImages/${imageName}`
+      const AssetsControllerInstance = new AssetsController()
+      await AssetsControllerInstance.store(image, bucketKey)
       const channel = streamClient.channel('messaging', name, {
         name: name,
         members: [user?.id.toString()],

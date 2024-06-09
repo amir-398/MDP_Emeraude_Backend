@@ -1,4 +1,3 @@
-import AssetsController from '#controllers/assets_controller'
 import Category from '#models/category'
 import Comment from '#models/comment'
 import Grade from '#models/grade'
@@ -21,15 +20,9 @@ import { DateTime } from 'luxon'
 export default class Post extends BaseModel {
   // generate presigned urls for the images of the post
   private static async generatePresignedUrls(post: Post, first: boolean) {
-    const assetsController = new AssetsController()
     await post.load('images', (query) => {
       query.select('id', 'url').if(first, (fQuery) => fQuery.where('order', 0))
     })
-    for (const image of post.images) {
-      if (image.url) {
-        image.url = await assetsController.create(`postImages/${image.url}`)
-      }
-    }
   }
 
   // get the category of the post

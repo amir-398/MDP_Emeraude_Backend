@@ -1,4 +1,3 @@
-import AssetsController from '#controllers/assets_controller'
 import Roles from '#enums/role'
 import Friend from '#models/friendship'
 import Message from '#models/message'
@@ -8,7 +7,7 @@ import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import { compose } from '@adonisjs/core/helpers'
 import hash from '@adonisjs/core/services/hash'
-import { BaseModel, afterFetch, afterFind, column, computed, hasMany } from '@adonisjs/lucid/orm'
+import { BaseModel, column, computed, hasMany } from '@adonisjs/lucid/orm'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import Comment from './comment.js'
@@ -19,11 +18,6 @@ const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
 })
 
 export default class User extends compose(BaseModel, AuthFinder) {
-  private static async generatePresignedUrls(user: User) {
-    const assetsController = new AssetsController()
-    user.profilImage = await assetsController.create(`profileImages/${user.profilImage}`)
-  }
-
   @column({ isPrimary: true })
   declare id: number
 
@@ -75,14 +69,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
   get isAdmin() {
     return this.role === Roles.ADMIN
   }
-  @afterFind()
-  static async afterFindHook(user: User) {
-    await this.generatePresignedUrls(user)
-  }
-  @afterFetch()
-  static async afterFetchHook(users: User[]) {
-    await Promise.all(users.map((user) => this.generatePresignedUrls(user)))
-  }
+
   @hasMany(() => Friend, {
     localKey: 'id',
     foreignKey: 'userId1',
