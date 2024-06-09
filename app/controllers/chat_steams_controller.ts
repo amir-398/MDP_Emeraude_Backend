@@ -1,3 +1,4 @@
+import AssetsController from '#controllers/assets_controller'
 import streamClient from '#start/stream'
 import { createGroupChannelValidator } from '#validators/channel'
 import { cuid } from '@adonisjs/core/helpers'
@@ -11,6 +12,7 @@ export default class ChatSteamsController {
       const channel = streamClient.channel('messaging', channelId, {
         members: [userId1.toString(), userId2.toString()],
         created_by_id: userId1.toString(),
+        channelType: 'private',
       })
       await channel.create()
     } catch (error) {
@@ -22,11 +24,18 @@ export default class ChatSteamsController {
   async createGroupChannel({ request, response, auth }: HttpContext) {
     try {
       const user = auth.user
-      const { name } = await request.validateUsing(createGroupChannelValidator)
+      if (!user) return response.badRequest({ message: 'Unauthorized' })
+
+      const { name, image } = await request.validateUsing(createGroupChannelValidator)
+      const imageName = `${cuid()}.${image.extname}`
+      const AssetsControllerInstance = new AssetsController(image, imageName)
+      await AssetsControllerInstance.store()
       const channel = streamClient.channel('messaging', name, {
         name: name,
         members: [user?.id.toString()],
         created_by_id: user?.id.toString(),
+        channelType: 'group',
+        image: imageName,
       })
       await channel.create()
       return response.ok({ message: 'Channel created successfully' })
@@ -47,6 +56,21 @@ export default class ChatSteamsController {
       return streamToken
     } catch (error) {
       return { message: error.message || 'Unauthorized' }
+    }
+  }
+
+  // Fonction pour ajouter l'utilisateur aux canaux de groupe
+  async addUserToGroupChannels(userId: number) {
+    try {
+      const filters = { type: 'messaging', channelType: 'group' }
+      const sort = [{ last_message_at: -1 }]
+      const channels = await streamClient.queryChannels(filters, sort)
+
+      for (const channel of channels) {
+        await channel.addMembers([userId.toString()])
+      }
+    } catch (error) {
+      console.error('Error adding user to group channels:', error)
     }
   }
 }

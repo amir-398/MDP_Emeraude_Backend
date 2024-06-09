@@ -153,4 +153,27 @@ export default class FriendsController {
       return response.status(401).json({ message: error.message || 'Unauthorized' })
     }
   }
+
+  async friendsSuggestions({ auth, response }: HttpContext) {
+    try {
+      const user = auth.user
+      if (!user) {
+        return response.status(401).json({ message: 'Unauthorized' })
+      }
+      const friendsSuggestions = await User.query()
+        .select('id', 'lastname', 'firstname', 'profilImage')
+        .whereNot('id', user.id)
+        .whereDoesntHave('sendedInvitations', (query) => {
+          query.where('userId2', user.id)
+        })
+        .whereDoesntHave('receivedInvitations', (query) => {
+          query.where('userId1', user.id)
+        })
+
+        .limit(10)
+      return response.ok(friendsSuggestions)
+    } catch (error) {
+      return response.badRequest({ message: error.message })
+    }
+  }
 }

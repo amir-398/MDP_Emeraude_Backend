@@ -13,6 +13,7 @@ const CommentsController = () => import('#controllers/comments_controller')
 const GradesController = () => import('#controllers/grades_controller')
 const ChatSteamsController = () => import('#controllers/chat_steams_controller')
 const NotificationsController = () => import('#controllers/notifications_controller')
+const AssetsController = () => import('#controllers/assets_controller')
 import { middleware } from '#start/kernel'
 import router from '@adonisjs/core/services/router'
 const RoomsController = () => import('#controllers/rooms_controller')
@@ -55,6 +56,7 @@ router
   .group(() => {
     router.get('/', [FriendsController, 'getFriends'])
     router.get('/pendingInvitations', [FriendsController, 'getPendingInvitations'])
+    router.get('/suggestion', [FriendsController, 'friendsSuggestions'])
     router.put('/acceptInvitation/:friendId', [FriendsController, 'acceptInvitation'])
     router.put('/rejectInvitation/:friendId', [FriendsController, 'rejectInvitation'])
     router.post('/sendInvitation/:userId', [FriendsController, 'sendInvitation'])
@@ -101,3 +103,11 @@ router
   })
   .use(middleware.auth())
   .prefix('/api/v1/notifications')
+
+// presigned url
+router
+  .group(() => {
+    router.post('/presignedUrl', [AssetsController, 'createPresignedUrl'])
+  })
+  .use(middleware.auth())
+  .prefix('/api/v1/assets')

@@ -1,17 +1,22 @@
+import env from '#start/env'
 import emitter from '@adonisjs/core/services/emitter'
 import Client from 'pg'
 
 class Notifications {
-  handle() {
-    const client = new Client.Client({
-      user: 'postgres',
-      password: 'sk43subezero',
-      database: 'postgres',
-      host: 'localhost',
+  private client: Client.Client
+
+  constructor() {
+    this.client = new Client.Client({
+      user: env.get('DB_USER'),
+      password: env.get('DB_PASSWORD'),
+      database: env.get('DB_DATABASE'),
+      host: env.get('DB_HOST'),
       port: 5432,
     })
+  }
 
-    client
+  async connect() {
+    this.client
       .connect()
       .then(() => {
         console.log('Connected to PostgreSQL databases')
@@ -19,13 +24,14 @@ class Notifications {
       .catch((err) => {
         console.log('Error connecting to PostgreSQL database', err)
       })
-    client.query('LISTEN watch_notifications')
 
-    client.on('notification', (msg) => {
+    this.client.query('LISTEN notifications_channel')
+
+    this.client.on('notification', (msg) => {
       emitter.emit('new:notification', msg.payload)
     })
     process.on('SIGINT', () => {
-      client.end()
+      this.client.end()
       process.exit()
     })
   }

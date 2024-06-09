@@ -1,5 +1,6 @@
 import env from '#start/env'
 import { MultipartFile } from '@adonisjs/core/bodyparser'
+import { HttpContext } from '@adonisjs/core/http'
 import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { createReadStream } from 'node:fs'
@@ -16,20 +17,11 @@ const client = new S3Client({
 })
 
 export default class AssetsController {
-  protected file: MultipartFile | null
-  protected bucketKey: string
-
-  constructor(file: MultipartFile | null, profilImageName: string) {
-    this.file = file
-    this.bucketKey = profilImageName
-  }
-
-  async store() {
-    const file = this.file
+  async store(file: MultipartFile | null, bucketKey: string) {
     const stream = createReadStream(file?.tmpPath!)
     const params = {
       Bucket: bucketName || '',
-      Key: this.bucketKey,
+      Key: bucketKey,
       Body: stream,
     }
     const command = new PutObjectCommand(params)
@@ -55,6 +47,22 @@ export default class AssetsController {
       return url
     } catch (err) {
       throw err.message
+    }
+  }
+
+  async createPresignedUrl({ request, response }: HttpContext) {
+    try {
+      const { bucketUrl } = request.all()
+
+      const getObjectParams = {
+        Bucket: bucketName || '',
+        Key: bucketUrl,
+      }
+      const command = new GetObjectCommand(getObjectParams)
+      const url = await getSignedUrl(client, command, { expiresIn: 100000 })
+      return response.ok({ url })
+    } catch (err) {
+      return response.badRequest({ message: err.message })
     }
   }
 

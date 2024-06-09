@@ -43,6 +43,7 @@ export default class AuthController {
         user.firstname,
         user.lastname
       )
+      await chatStreamController.addUserToGroupChannels(user.id)
       return response.created({ token: token, streamToken: streamToken })
     } catch (error) {
       // rollback the transaction

@@ -3,9 +3,22 @@ import ws from '#services/ws'
 
 export default class NotificationListener {
   async handle(notification: Notification) {
-    console.log('Received notification from the function passed by the emmiter:', notification)
+    if (!ws.io) return console.error('Websocket server not available')
+    if (!notification) return console.error('Notification not found')
+    const notificationParsed = JSON.parse(notification)
+    console.log('Notification:', notificationParsed)
+
+    const getNotification = await Notification.query()
+      .where('id', notificationParsed.id)
+      .preload('friendship')
+      .first()
+    if (!getNotification) {
+      console.error('Notification not found in the database')
+      return
+    }
+    const notificationData = getNotification.toJSON()
     try {
-      ws.io?.to(`user:${userId}`).emit('ping', { message: notification })
+      ws.io?.to(`user:${notificationData.userId}`).emit('notifications', { ...notificationData })
     } catch (error) {
       console.log('Error:', error)
     }

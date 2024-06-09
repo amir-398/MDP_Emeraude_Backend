@@ -22,7 +22,10 @@ export default class NotificationsController {
   async index({ response, auth }: HttpContext) {
     try {
       const userId = auth.user?.id
-      console.log('userId', userId)
+
+      if (!userId) {
+        return response.badRequest({ message: 'Unauthorized' })
+      }
 
       const notifications = await Notification.query().where('userId', userId).preload('friendship')
 
