@@ -28,12 +28,16 @@ export default class UserDataController {
   async update({ auth, request, response }: HttpContext) {
     try {
       const payload = await request.validateUsing(updateUserValidator)
-      const user = auth.user?.id
-      const userProfil = await User.findBy('userId', user)
-      await userProfil?.merge(payload).save()
+      console.log(payload)
+
+      const user = auth.user
+      if (!user) {
+        return response.status(401).json({ message: 'Unauthorized' })
+      }
+      await user?.merge(payload).save()
       return response.status(200).json({ message: 'User data updated successfully' })
     } catch (error) {
-      return response.status(401).json({ message: 'Unauthorized' })
+      return response.status(401).json({ message: error })
     }
   }
 

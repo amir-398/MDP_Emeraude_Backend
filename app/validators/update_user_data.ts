@@ -18,6 +18,16 @@ export const updateUserValidator = vine.compile(
       })
       .optional(),
     birthdate: vine.date().optional(),
+    profilImage: vine.string().trim().escape().optional(),
+    description: vine.string().trim().escape().optional(),
+    cityOfBirth: vine.string().trim().escape().optional(),
+    iLike: vine.string().trim().escape().optional(),
+    dreamCity: vine.string().trim().escape().optional(),
+    activity: vine.string().trim().escape().optional(),
+    astrologicalSign: vine.string().trim().escape().optional(),
+    favoriteShows: vine.string().trim().escape().optional(),
+    favoriteArtists: vine.string().trim().escape().optional(),
+    centerOfInterest: vine.string().trim().escape().optional(),
   })
 )
 

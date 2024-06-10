@@ -46,13 +46,25 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare description: string | null
 
   @column()
-  declare profession: string | null
+  declare cityOfBirth: string | null
+
+  @column()
+  declare iLike: string | null
+
+  @column()
+  declare dreamCity: string | null
+
+  @column()
+  declare activity: string | null
 
   @column()
   declare astrologicalSign: string | null
 
   @column()
-  declare favorite_shows: string | null
+  declare favoriteShows: string | null
+
+  @column()
+  declare favoriteArtists: string | null
 
   @column()
   declare centerOfInterest: string | null
