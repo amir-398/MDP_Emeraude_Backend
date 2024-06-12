@@ -40,14 +40,15 @@ router
 router
   .group(() => {
     router.get('/getData', [UserDataController, 'show']).as('getUserData')
-    router
-      .post('/getUserProfilImage', [UserDataController, 'getProfilImage'])
-      .as('getUserProfilImage')
+    router.get('/profil/:userId', [UserDataController, 'index']).as('getUserProfil')
+    router.post('/search', [UserDataController, 'searchUsers']).as('searchUsers')
     router.put('/update', [UserDataController, 'update']).as('updateUserData')
     router
       .put('/updatePassword', [UserDataController, 'updateUserPassword'])
       .as('updateUserPassword')
+    router.delete('/delete', [UserDataController, 'destroy']).as('deleteUserData')
   })
+
   .use(middleware.auth())
   .prefix('/api/v1/user')
 

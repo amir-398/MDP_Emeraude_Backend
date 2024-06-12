@@ -1,7 +1,12 @@
 import env from '#start/env'
 import { MultipartFile } from '@adonisjs/core/bodyparser'
 import { HttpContext } from '@adonisjs/core/http'
-import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { createReadStream } from 'node:fs'
 const accessKeyId: string | undefined = env.get('BUCKET_ACCESS_KEY_ID')
@@ -67,6 +72,21 @@ export default class AssetsController {
   }
 
   /**
+   * Delete record
+   */
+  async destroy(bucketUrl: string) {
+    const params = {
+      Bucket: bucketName || '',
+      Key: bucketUrl,
+    }
+    try {
+      const command = new DeleteObjectCommand(params)
+      await client.send(command)
+    } catch (err) {
+      throw err.message
+    }
+  }
+  /**
    * Show individual record
    */
   // async show({ params }: HttpContext) {}
@@ -80,9 +100,4 @@ export default class AssetsController {
    * Handle form submission for the edit action
    */
   // async update({ params, request }: HttpContext) {}
-
-  /**
-   * Delete record
-   */
-  // async destroy({ params }: HttpContext) {}
 }

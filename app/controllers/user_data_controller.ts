@@ -1,16 +1,24 @@
 import User from '#models/user'
 import { updateUserPasswordValidator, updateUserValidator } from '#validators/update_user_data'
+import { cuid } from '@adonisjs/core/helpers'
 import type { HttpContext } from '@adonisjs/core/http'
 import hash from '@adonisjs/core/services/hash'
 import db from '@adonisjs/lucid/services/db'
+import AssetsController from './assets_controller.js'
+import ChatSteamsController from './chat_steams_controller.js'
 
-interface UserDataProps {
-  firstname: string
-  lastname: string
-  birthDate: Date
-  profilImage: string
-}
 export default class UserDataController {
+  // get userData Profil
+  async index({ response, request }: HttpContext) {
+    try {
+      const { userId } = request.params()
+      if (!userId) return response.badRequest({ message: 'User not found' })
+      const user = await User.findOrFail(userId)
+      return response.ok(user)
+    } catch (error) {
+      return response.badRequest({ message: error.message || 'Unauthorized' })
+    }
+  }
   // get user data
   async show({ auth, response }: HttpContext) {
     try {
@@ -27,15 +35,37 @@ export default class UserDataController {
   // update user data
   async update({ auth, request, response }: HttpContext) {
     try {
-      const payload = await request.validateUsing(updateUserValidator)
-      console.log(payload)
-
       const user = auth.user
+      const oldProfilImage = user?.profilImage
+      const oldBucketKey = `profileImages/${user?.profilImage}`
+
       if (!user) {
         return response.status(401).json({ message: 'Unauthorized' })
       }
+      const payload = await request.validateUsing(updateUserValidator)
+      const profilImage = payload.profilImage
+
+      if (profilImage) {
+        const imageId = `${cuid()}.${profilImage.subtype}`
+        const bucketKey = `profileImages/${imageId}`
+        try {
+          const uploadImageController = new AssetsController()
+          await uploadImageController.store(profilImage, bucketKey)
+          oldProfilImage && (await uploadImageController.destroy(oldBucketKey))
+          payload.profilImage = imageId
+        } catch (error) {
+          return response.badRequest({ message: `Failed to upload image: ${error.message}` })
+        }
+      }
       await user?.merge(payload).save()
-      return response.status(200).json({ message: 'User data updated successfully' })
+      const ChatSteamsControllerInstance = new ChatSteamsController()
+      await ChatSteamsControllerInstance.updateUser(
+        user!.id,
+        user!.firstname,
+        user!.lastname,
+        user!.profilImage
+      )
+      return response.status(200).json({ data: user })
     } catch (error) {
       return response.status(401).json({ message: error })
     }
@@ -68,14 +98,49 @@ export default class UserDataController {
     }
   }
 
-  async getProfilImage({ response, request }: HttpContext) {
+  async destroy({ auth, response }: HttpContext) {
     try {
-      const { userId } = request.all()
-      const userData = await User.find(userId)
-      const userImage = userData?.profilImage
-      return response.ok(userImage)
+      const user = auth.user
+      if (!user) {
+        return response.status(401).json({ message: 'Unauthorized' })
+      }
+      const ChatSteamsControllerInstance = new ChatSteamsController()
+      await db.from('auth_access_tokens').where('tokenable_id', user.id).delete()
+      await user?.delete()
+      await ChatSteamsControllerInstance.deleteUser(user!.id)
+      return response.status(200).json({ message: 'User deleted successfully' })
     } catch (error) {
-      return response.badRequest({ message: 'Unauthorized' })
+      return response.status(401).json({ message: error.message })
+    }
+  }
+
+  async searchUsers({ request, response, auth }: HttpContext) {
+    try {
+      const { query } = request.all()
+      if (!query) {
+        return response.badRequest({ message: 'Query is required' })
+      }
+      const capitalizedQueries = query
+        .split(' ')
+        .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+
+      const userId = auth.user?.id
+
+      const users =
+        userId &&
+        (await User.query()
+          .select('id', 'firstname', 'lastname', 'profilImage')
+          .whereNot('id', userId)
+          .where((builder) => {
+            capitalizedQueries.forEach((word: string) => {
+              builder
+                .orWhere('firstname', 'like', `%${word}%`)
+                .orWhere('lastname', 'like', `%${word}%`)
+            })
+          }))
+      return response.ok(users)
+    } catch (error) {
+      return response.badRequest({ message: error.message })
     }
   }
 }

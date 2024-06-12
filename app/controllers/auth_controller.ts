@@ -41,7 +41,8 @@ export default class AuthController {
       const streamToken = await chatStreamController.storeUser(
         user.id,
         user.firstname,
-        user.lastname
+        user.lastname,
+        user.profilImage
       )
       await chatStreamController.addUserToGroupChannels(user.id)
       return response.created({ token: token, streamToken: streamToken })

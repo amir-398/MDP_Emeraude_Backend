@@ -20,6 +20,21 @@ export default class ChatSteamsController {
     }
   }
 
+  // remove user from channel
+  async removeUserFromChannels(userId: number) {
+    try {
+      const filters = { type: 'messaging' }
+      const sort = [{ last_message_at: -1 }]
+      const channels = await streamClient.queryChannels(filters, sort)
+
+      for (const channel of channels) {
+        await channel.removeMembers([userId.toString()])
+      }
+    } catch (error) {
+      console.error('Error removing user from channels:', error)
+    }
+  }
+
   // create groupe channel
   async createGroupChannel({ request, response, auth }: HttpContext) {
     try {
@@ -44,13 +59,13 @@ export default class ChatSteamsController {
       return response.badRequest({ message: error.message || 'Unauthorized' })
     }
   }
-
   // store user in stream
-  async storeUser(userId: number, firstname: string, lastname: string) {
+  async storeUser(userId: number, firstname: string, lastname: string, imageUrl: string) {
     try {
       const streamUser = {
         id: userId.toString(),
         name: `${firstname} ${lastname}`,
+        image: `https://frienddly.s3.eu-north-1.amazonaws.com/profileImages/${imageUrl}`,
       }
       await streamClient.upsertUser(streamUser)
       const streamToken = streamClient.createToken(userId.toString())
@@ -60,6 +75,19 @@ export default class ChatSteamsController {
     }
   }
 
+  //update user in stream
+  async updateUser(userId: number, firstname: string, lastname: string, imageUrl: string) {
+    try {
+      const streamUser = {
+        id: userId.toString(),
+        name: `${firstname} ${lastname}`,
+        image: `https://frienddly.s3.eu-north-1.amazonaws.com/profileImages/${imageUrl}`,
+      }
+      await streamClient.upsertUser(streamUser)
+    } catch (error) {
+      console.error('Error updating user:', error)
+    }
+  }
   // Fonction pour ajouter l'utilisateur aux canaux de groupe
   async addUserToGroupChannels(userId: number) {
     try {
@@ -72,6 +100,18 @@ export default class ChatSteamsController {
       }
     } catch (error) {
       console.error('Error adding user to group channels:', error)
+    }
+  }
+
+  // delete user
+  async deleteUser(userId: number) {
+    try {
+      await this.removeUserFromChannels(userId)
+      await streamClient.deleteUser(userId.toString(), {
+        hard_delete: true,
+      })
+    } catch (error) {
+      console.error('Error deleting user:', error)
     }
   }
 }

@@ -189,7 +189,7 @@ export default class extends BaseSeeder {
     await User.createMany(this.data)
     const chatStreamController = new ChatSteamsController()
     for (const user of this.data) {
-      await chatStreamController.storeUser(user.id, user.firstname, user.lastname)
+      await chatStreamController.storeUser(user.id, user.firstname, user.lastname, user.profilImage)
     }
   }
 }

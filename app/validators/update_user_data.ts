@@ -18,8 +18,8 @@ export const updateUserValidator = vine.compile(
       })
       .optional(),
     birthdate: vine.date().optional(),
-    profilImage: vine.string().trim().escape().optional(),
-    description: vine.string().trim().escape().optional(),
+    profilImage: vine.file({ extnames: ['jpg', 'jpeg', 'png', 'webp'], size: '5mb' }).optional(),
+    description: vine.string().minLength(3).maxLength(500).trim().escape().optional(),
     cityOfBirth: vine.string().trim().escape().optional(),
     iLike: vine.string().trim().escape().optional(),
     dreamCity: vine.string().trim().escape().optional(),
