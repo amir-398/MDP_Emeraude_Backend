@@ -134,8 +134,8 @@ export default class UserDataController {
           .where((builder) => {
             capitalizedQueries.forEach((word: string) => {
               builder
-                .orWhere('firstname', 'like', `%${word}%`)
-                .orWhere('lastname', 'like', `%${word}%`)
+                .orWhere('firstname', 'ilike', `%${word}%`)
+                .orWhere('lastname', 'ilike', `%${word}%`)
             })
           }))
       return response.ok(users)

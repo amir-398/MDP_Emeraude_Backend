@@ -6,7 +6,7 @@ import PostImagesController from './post_images_controller.js'
 
 export default class PostsController {
   async index({ request, response }: HttpContext) {
-    const { lgt, ltd, cat, nb } = request.qs()
+    const { lgt, ltd, cat, nb, q } = request.qs()
 
     try {
       const postsQuery = Post.query().select(
@@ -19,7 +19,9 @@ export default class PostsController {
         'price',
         'location'
       )
-
+      if (q) {
+        postsQuery.whereILike('title', `%${q}%`)
+      }
       if (lgt && ltd) {
         postsQuery
           .select(
