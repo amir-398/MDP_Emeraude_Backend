@@ -1,7 +1,6 @@
 import env from '#start/env'
 import { MultipartFile } from '@adonisjs/core/bodyparser'
-import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import { createReadStream } from 'node:fs'
 const accessKeyId: string | undefined = env.get('BUCKET_ACCESS_KEY_ID')
 const secretAccessKey: string | undefined = env.get('BUCKET_SECRET_ACCESS_KEY')
@@ -16,62 +15,38 @@ const client = new S3Client({
 })
 
 export default class AssetsController {
-  protected file: MultipartFile | null
-  protected profilImageName: string
-
-  constructor(file: MultipartFile, profilImageName: string) {
-    this.file = file
-    this.profilImageName = profilImageName
-  }
-
-  async store() {
-    const file = this.file
+  /**
+   * Get signed url
+   */
+  async store(file: MultipartFile, bucketKey: string) {
     const stream = createReadStream(file?.tmpPath!)
     const params = {
       Bucket: bucketName || '',
-      Key: this.profilImageName,
-      contentType: file?.subtype,
+      Key: bucketKey,
       Body: stream,
     }
     const command = new PutObjectCommand(params)
+
     try {
-      const response = await client.send(command)
-      return response
+      await client.send(command)
     } catch (err) {
-      return err.message
+      throw err.message
     }
   }
-
-  /**
-   * Display form to create a new record
-   */
-  async create() {
-    const getObjectParams = {
-      Bucket: bucketName || '',
-      Key: this.profilImageName,
-    }
-    const command = new GetObjectCommand(getObjectParams)
-    const url = await getSignedUrl(client, command, { expiresIn: 43200 })
-    return url
-  }
-
-  /**
-   * Show individual record
-   */
-  // async show({ params }: HttpContext) {}
-
-  /**
-   * Edit individual record
-   */
-  // async edit({ params }: HttpContext) {}
-
-  /**
-   * Handle form submission for the edit action
-   */
-  // async update({ params, request }: HttpContext) {}
 
   /**
    * Delete record
    */
-  // async destroy({ params }: HttpContext) {}
+  async destroy(bucketUrl: string) {
+    const params = {
+      Bucket: bucketName || '',
+      Key: bucketUrl,
+    }
+    try {
+      const command = new DeleteObjectCommand(params)
+      await client.send(command)
+    } catch (err) {
+      throw err.message
+    }
+  }
 }
