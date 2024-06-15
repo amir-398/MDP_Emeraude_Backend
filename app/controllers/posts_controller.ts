@@ -1,5 +1,5 @@
 import Post from '#models/post'
-import { postValidator } from '#validators/post'
+import { postValidator, updatePostValidator } from '#validators/post'
 import { HttpContext } from '@adonisjs/core/http'
 import db from '@adonisjs/lucid/services/db'
 import PostImagesController from './post_images_controller.js'
@@ -101,10 +101,26 @@ export default class PostsController {
   }
 
   async update({ response, params, request }: HttpContext) {
-    return response.json({ message: 'Hello World' })
+    try {
+      const { id } = params
+      const payload = await request.validateUsing(updatePostValidator)
+      const post = await Post.findOrFail(id)
+      post.merge(payload)
+      await post.save()
+      return response.ok({ message: 'post modifié avec succées' })
+    } catch (error) {
+      return response.badRequest({ message: error.message })
+    }
   }
 
   async destroy({ response, params }: HttpContext) {
-    return response.json({ message: 'Hello World' })
+    try {
+      const { id } = params
+      const post = await Post.findOrFail(id)
+      await post.delete()
+      return response.ok({ message: 'post supprimé avec succées' })
+    } catch (error) {
+      return response.badRequest({ message: error.message })
+    }
   }
 }

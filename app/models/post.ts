@@ -78,7 +78,7 @@ export default class Post extends BaseModel {
   declare longitude: number
 
   @column()
-  declare geoloc: Point
+  declare geoloc: string
 
   @column()
   declare grade: number

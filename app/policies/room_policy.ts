@@ -1,7 +1,6 @@
 import Room from '#models/room'
 import User from '#models/user'
 import { BasePolicy } from '@adonisjs/bouncer'
-import { AuthorizerResponse } from '@adonisjs/bouncer/types'
 import RoomMembersRole from '../enums/room_members_role.js'
 
 export default class RoomPolicy extends BasePolicy {

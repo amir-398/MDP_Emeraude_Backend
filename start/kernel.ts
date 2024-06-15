@@ -23,8 +23,8 @@ server.errorHandler(() => import('#exceptions/handler'))
  * the request URL.
  */
 server.use([
-  () => import('#middleware/container_bindings_middleware'),
-  () => import('#middleware/force_json_response_middleware'),
+  () => import('#policies/middleware/container_bindings_middleware'),
+  () => import('#policies/middleware/force_json_response_middleware'),
   () => import('@adonisjs/cors/cors_middleware'),
 ])
 
@@ -35,7 +35,7 @@ server.use([
 router.use([
   () => import('@adonisjs/core/bodyparser_middleware'),
   () => import('@adonisjs/auth/initialize_auth_middleware'),
-  () => import('#middleware/initialize_bouncer_middleware')
+  () => import('#policies/middleware/initialize_bouncer_middleware'),
 ])
 
 /**
@@ -43,6 +43,6 @@ router.use([
  * the routes or the routes group.
  */
 export const middleware = router.named({
-  wsAuth: () => import('#middleware/ws_auth_middleware'),
-  auth: () => import('#middleware/auth_middleware'),
+  wsAuth: () => import('#policies/middleware/ws_auth_middleware'),
+  auth: () => import('#policies/middleware/auth_middleware'),
 })

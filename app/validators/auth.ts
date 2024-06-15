@@ -1,7 +1,7 @@
 import vine from '@vinejs/vine'
 export const registerUserValidator = vine.compile(
   vine.object({
-    firstname: vine.string().trim().escape(),
+    firstname: vine.string().minLength(3).maxLength(50).trim().escape(),
     lastname: vine.string().trim().escape(),
     email: vine
       .string()
@@ -17,15 +17,15 @@ export const registerUserValidator = vine.compile(
         return !user
       }),
     birthDate: vine.date(),
-    password: vine.string().minLength(8).maxLength(32).escape(),
-    profilImage: vine.file({ extnames: ['jpg', 'jpeg', 'png', 'webp'], size: '5mb' }),
+    password: vine.string().minLength(8).maxLength(50).escape(),
+    profilImage: vine.file({ extnames: ['jpg', 'jpeg', 'png', 'webp'], size: '10mb' }),
   })
 )
 
 export const loginUserValidator = vine.compile(
   vine.object({
     email: vine.string().email().trim().escape().toLowerCase(),
-    password: vine.string().minLength(8).maxLength(32).escape(),
+    password: vine.string().minLength(8).maxLength(50).escape(),
   })
 )
 
