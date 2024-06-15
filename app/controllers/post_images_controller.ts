@@ -13,14 +13,29 @@ export default class PostImagesController {
           const imageId = `${cuid()}.${image.subtype}`
           const bucketKey = `postImages/${imageId}`
           try {
-            const uploadImageController = new AssetsController(image, bucketKey)
-            await uploadImageController.store()
+            const uploadImageController = new AssetsController()
+            await uploadImageController.store(image, bucketKey)
           } catch (error) {
             throw new Error(error.message) // Ne pas rollback ici, gérer la transaction dans le contrôleur principal
           }
           await PostImage.create({ postId, url: imageId, order: index }, { client: trx })
         })
       )
+    } catch (error) {
+      throw new Error(error.message) // Ne pas rollback ici, gérer la transaction dans le contrôleur principal
+    }
+  }
+
+  async destroy(postId: number) {
+    try {
+      const images = await PostImage.query().where('postId', postId).select('url')
+      await Promise.all(
+        images.map(async (image) => {
+          const deleteImageController = new AssetsController()
+          await deleteImageController.destroy(image.url)
+        })
+      )
+      await PostImage.query().where('postId', postId).delete()
     } catch (error) {
       throw new Error(error.message) // Ne pas rollback ici, gérer la transaction dans le contrôleur principal
     }

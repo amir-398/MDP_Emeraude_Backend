@@ -38,4 +38,67 @@ export default class CommentsController {
       return response.badRequest({ message: `Failed to create comment: ${error.message}` })
     }
   }
+
+  async update({ auth, response, request, params }: HttpContext) {
+    try {
+      const payload = await request.validateUsing(postCommentValidator)
+      const userId = auth.user?.id
+      const { postId } = params
+      const postIdValidated = await postIdParamValidator.validate({ postId })
+
+      // check if post exists
+      const postExists = (await Post.find(postId)) ? true : false
+      if (!postExists) {
+        return response.notFound({ message: `Post with id ${postId} not found` })
+      }
+
+      // check if comment already exists
+      const commentExists =
+        userId &&
+        (await Comment.query()
+          .where('userId', userId)
+          .where('postId', postIdValidated.postId)
+          .first())
+      if (!commentExists) {
+        return response.notFound({ message: 'Comment not found' })
+      }
+
+      // update comment
+      await commentExists.merge(payload).save()
+      return response.ok({ message: 'Comment updated successfully' })
+    } catch (error) {
+      return response.badRequest({ message: `Failed to update comment: ${error.message}` })
+    }
+  }
+
+  async destroy({ auth, response, params }: HttpContext) {
+    try {
+      const userId = auth.user?.id
+      const { postId } = params
+      const postIdValidated = await postIdParamValidator.validate({ postId })
+
+      // check if post exists
+      const postExists = (await Post.find(postId)) ? true : false
+      if (!postExists) {
+        return response.notFound({ message: `Post with id ${postId} not found` })
+      }
+
+      // check if comment already exists
+      const commentExists =
+        userId &&
+        (await Comment.query()
+          .where('userId', userId)
+          .where('postId', postIdValidated.postId)
+          .first())
+      if (!commentExists) {
+        return response.notFound({ message: 'Comment not found' })
+      }
+
+      // delete comment
+      await commentExists.delete()
+      return response.ok({ message: 'Comment deleted successfully' })
+    } catch (error) {
+      return response.badRequest({ message: `Failed to delete comment: ${error.message}` })
+    }
+  }
 }

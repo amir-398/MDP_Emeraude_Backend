@@ -1,4 +1,5 @@
 import Post from '#models/post'
+import RolePolicy from '#policies/role_policy'
 import { postValidator, updatePostValidator } from '#validators/post'
 import { HttpContext } from '@adonisjs/core/http'
 import db from '@adonisjs/lucid/services/db'
@@ -53,9 +54,16 @@ export default class PostsController {
     }
   }
 
-  async store({ response, request, auth }: HttpContext) {
+  async store({ response, request, auth, bouncer }: HttpContext) {
     const trx = await db.transaction()
+    // verifu if the user is admin
     try {
+      if (await bouncer.with(RolePolicy).denies('isAdmin')) {
+        return response.badRequest({
+          message: "Vous n'avez pas les droits pour effectuer cette action",
+        })
+      }
+
       const userId = auth?.user?.id
       const { title, categoryId, price, description, location, geoloc, images } =
         await request.validateUsing(postValidator)
@@ -100,8 +108,13 @@ export default class PostsController {
     }
   }
 
-  async update({ response, params, request }: HttpContext) {
+  async update({ response, params, request, bouncer }: HttpContext) {
     try {
+      if (await bouncer.with(RolePolicy).denies('isAdmin')) {
+        return response.badRequest({
+          message: "Vous n'avez pas les droits pour effectuer cette action",
+        })
+      }
       const { id } = params
       const payload = await request.validateUsing(updatePostValidator)
       const post = await Post.findOrFail(id)
@@ -113,8 +126,13 @@ export default class PostsController {
     }
   }
 
-  async destroy({ response, params }: HttpContext) {
+  async destroy({ response, params, bouncer }: HttpContext) {
     try {
+      if (await bouncer.with(RolePolicy).denies('isAdmin')) {
+        return response.badRequest({
+          message: "Vous n'avez pas les droits pour effectuer cette action",
+        })
+      }
       const { id } = params
       const post = await Post.findOrFail(id)
       await post.delete()

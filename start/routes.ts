@@ -84,7 +84,13 @@ router
     router.get('/:id', [PostsController, 'show']).as('getPost')
     router.post('/addPost', [PostsController, 'store']).as('storePost')
     router.post('/:postId/addComment', [CommentsController, 'store']).as('addComment')
+    router.put('/:postId/updateComment', [CommentsController, 'update']).as('updateComment')
+    router.delete('/:postId/deleteComment', [CommentsController, 'destroy']).as('deleteComment')
+    router.put('/:id', [PostsController, 'update']).as('updatePost')
+    router.delete('/:id', [PostsController, 'destroy']).as('deletePost')
     router.post('/:postId/addGrade', [GradesController, 'store']).as('addGrade')
+    router.put('/:postId/updateGrade', [GradesController, 'update']).as('updateGrade')
+    router.delete('/:postId/deleteGrade', [GradesController, 'destroy']).as('deleteGrade')
   })
   .use(middleware.auth())
   .prefix('/api/v1/posts')
@@ -93,6 +99,10 @@ router
 router
   .group(() => {
     router.get('/', [CategoriesController, 'index'])
+    router.post('/', [CategoriesController, 'store'])
+    router.get('/:id', [CategoriesController, 'show'])
+    router.put('/:id', [CategoriesController, 'update'])
+    router.delete('/:id', [CategoriesController, 'destroy'])
   })
   .use(middleware.auth())
   .prefix('/api/v1/categories')
@@ -104,11 +114,3 @@ router
   })
   .use(middleware.auth())
   .prefix('/api/v1/notifications')
-
-// presigned url
-router
-  .group(() => {
-    router.post('/presignedUrl', [AssetsController, 'createPresignedUrl'])
-  })
-  .use(middleware.auth())
-  .prefix('/api/v1/assets')

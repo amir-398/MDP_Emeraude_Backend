@@ -13,6 +13,7 @@
 */
 
 export const policies = {
+  PostPolicy: () => import('#policies/role_policy'),
   RoomPolicy: () => import('#policies/room_policy'),
   FriendPolicy: () => import('#policies/friendship_policy'),
 }
