@@ -1,39 +1,112 @@
+import AssetsController from '#controllers/assets_controller'
+import ChatSteamsController from '#controllers/chat_steams_controller'
 import User from '#models/user'
-import { userProfilImageValidator } from '#validators/asset'
+import streamClient from '#start/stream'
+import { registerUserValidator, userEmailValidator } from '#validators/auth'
 import { loginUserValidator } from '#validators/login_user'
-import { registerUserValidator } from '#validators/register_user'
 import { cuid } from '@adonisjs/core/helpers'
 import type { HttpContext } from '@adonisjs/core/http'
-import AssetsController from './assets_controller.js'
+import db from '@adonisjs/lucid/services/db'
 
 export default class AuthController {
   //register logic
-
   async register({ request, response }: HttpContext) {
-    const payload = await request.validateUsing(registerUserValidator)
-    const profilImage = request.file('profil_image')
-    //generate a random name for the image
+    //register logic
+    const trx = await db.transaction()
+    try {
+      const payload = await request.validateUsing(registerUserValidator)
+      const chatStreamController = new ChatSteamsController()
+      const profilImage = payload.profilImage
+      const imageId = `${cuid()}.${profilImage.subtype}`
+      const bucketKey = `profileImages/${imageId}`
+      const data = { ...payload, profilImage: imageId }
+      // upload image to s3
+      try {
+        const uploadImageController = new AssetsController()
+        await uploadImageController.store(profilImage, bucketKey)
+      } catch (error) {
+        await trx.rollback()
+        return response.badRequest({ message: `Failed to upload image: ${error.message}` })
+      }
 
-    const valideProfilImage = await userProfilImageValidator.validate({ profil_image: profilImage })
-    const profilImageName = cuid() + '.' + valideProfilImage.profil_image?.extname
+      // create user
+      const { id } = await User.create(data, { client: trx })
 
-    //upload the image to the s3 bucket
-    const uploadImageController = new AssetsController(
-      valideProfilImage.profil_image,
-      profilImageName
-    )
-    await uploadImageController.store()
+      // // commit the transaction
+      await trx.commit()
 
-    const userData = { ...payload, profil_image_name: profilImageName }
-    await User.create(userData)
-    return response.status(201).json({ message: 'User created successfully' })
+      // generate token
+      const user = await User.findOrFail(id)
+      const token = await User.accessTokens.create(user)
+      const streamToken = await chatStreamController.storeUser(
+        user.id,
+        user.firstname,
+        user.lastname,
+        user.profilImage
+      )
+      await chatStreamController.addUserToGroupChannels(user.id)
+      return response.created({ token: token, streamToken: streamToken })
+    } catch (error) {
+      // rollback the transaction
+      await trx.rollback()
+      console.log(error.message)
+      return response.status(401).json({ message: error })
+    }
   }
 
-  async login({ request }: HttpContext) {
-    //login logic
-    const { email, password } = await request.validateUsing(loginUserValidator)
-    const user = await User.verifyCredentials(email, password)
-    const token = await User.accessTokens.create(user)
-    return { token: token, ...user.serialize() }
+  //login logic
+  async login({ response, request }: HttpContext) {
+    try {
+      // validate user data
+      const { email, password } = await request.validateUsing(loginUserValidator)
+
+      // verify user credentials
+      const user = await User.verifyCredentials(email, password)
+
+      // generate token
+      const token = await User.accessTokens.create(user)
+
+      const streamToken = streamClient.createToken(user.id.toString())
+
+      // return token
+      return response.ok({ token: token, streamToken: streamToken })
+    } catch (error) {
+      return response.badRequest({ message: error.message })
+    }
+  }
+
+  //logout logic
+  async logout({ auth, response }: HttpContext) {
+    const user = auth.getUserOrFail()
+    const token = auth.user?.currentAccessToken.identifier
+    if (!token) {
+      return response.badRequest({ message: 'Token not found' })
+    }
+    await User.accessTokens.delete(user, token)
+    return response.ok({ message: 'Logged out' })
+  }
+
+  // const verify if emailExist
+  async verifyEmail({ response, request }: HttpContext) {
+    const { email } = await request.validateUsing(userEmailValidator)
+    try {
+      const isUserExist = (await User.findBy('email', email)) ? true : false
+      return response.send(isUserExist)
+    } catch (error) {
+      response.badRequest({ message: 'error de vérification du mail' })
+    }
+  }
+
+  async verifyToken({ auth, response }: HttpContext) {
+    try {
+      const authcheck = await auth.check()
+      if (authcheck) {
+        return response.ok(true)
+      } else {
+        return response.status(401).json({ message: false })
+      }
+    } catch (error) {
+      return response.status(401).json({ message: false })
+    }
   }
 }
