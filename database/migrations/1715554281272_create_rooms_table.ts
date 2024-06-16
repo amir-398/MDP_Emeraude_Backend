@@ -12,7 +12,7 @@ export default class extends BaseSchema {
         .enu('room_type', [RoomType.GROUP, RoomType.PRIVATE], {
           useNative: true,
           enumName: 'room_type',
-          existingType: true,
+          existingType: false,
         })
         .defaultTo(RoomType.PRIVATE)
         .notNullable()
@@ -20,7 +20,7 @@ export default class extends BaseSchema {
         .enu('visibility', [RoomVisibility.PUBLIC, RoomVisibility.PRIVATE], {
           useNative: true,
           enumName: 'room_visibility',
-          existingType: true,
+          existingType: false,
         })
         .defaultTo(RoomType.PRIVATE)
         .notNullable()
