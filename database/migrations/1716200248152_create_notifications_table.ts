@@ -19,7 +19,7 @@ export default class extends BaseSchema {
         .enu('target_type', [NotificationType.FRIENDSHIPS, NotificationType.MESSAGES], {
           useNative: true,
           enumName: 'notification_type',
-          existingType: true,
+          existingType: false,
         })
         .notNullable()
       table.timestamp('created_at')

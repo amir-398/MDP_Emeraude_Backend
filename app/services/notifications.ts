@@ -12,6 +12,7 @@ class Notifications {
       database: env.get('DB_DATABASE'),
       host: env.get('DB_HOST'),
       port: 5432,
+      ssl: true,
     })
   }
 
