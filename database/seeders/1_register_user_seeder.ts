@@ -14,7 +14,7 @@ export default class extends BaseSeeder {
       birthDate: new Date('1996-03-30'),
       description:
         'Développeur web passionné par le basketball, la lecture et la programmation. Originaire de Paris, mon rêve est de vivre à New York.',
-      cityOfBith: 'Paris',
+      cityOfBirth: 'Paris',
       iLike: 'Jouer au basket, lire des livres, coder',
       dreamCity: 'New York',
       activity: 'Web Développeur',
@@ -33,7 +33,7 @@ export default class extends BaseSeeder {
       birthDate: new Date('1990-07-14'),
       description:
         'Sophia est une passionnée de la nature et adore explorer de nouveaux endroits. Elle aime aussi la photographie et la cuisine.',
-      cityOfBith: 'Lyon',
+      cityOfBirth: 'Lyon',
       iLike: 'Photographie, randonnée, cuisine',
       dreamCity: 'Tokyo',
       activity: 'Photographe',
@@ -52,7 +52,7 @@ export default class extends BaseSeeder {
       birthDate: new Date('1985-11-22'),
       description:
         "Lucas est un entrepreneur dynamique passionné par les nouvelles technologies et l'innovation. Il aime aussi le sport et les voyages.",
-      cityOfBith: 'Marseille',
+      cityOfBirth: 'Marseille',
       iLike: 'Innovation, sport, voyages',
       dreamCity: 'San Francisco',
       activity: 'Entrepreneur',
@@ -71,7 +71,7 @@ export default class extends BaseSeeder {
       birthDate: new Date('1992-05-18'),
       description:
         'Emma est une artiste talentueuse qui adore peindre et dessiner. Elle aime aussi la musique et les animaux.',
-      cityOfBith: 'Nice',
+      cityOfBirth: 'Nice',
       iLike: 'Peinture, dessin, musique, animaux',
       dreamCity: 'Paris',
       activity: 'Artiste',
@@ -90,7 +90,7 @@ export default class extends BaseSeeder {
       birthDate: new Date('1988-08-30'),
       description:
         'Noah est un musicien passionné qui adore jouer de la guitare et écrire des chansons. Il aime aussi voyager et découvrir de nouvelles cultures.',
-      cityOfBith: 'Bordeaux',
+      cityOfBirth: 'Bordeaux',
       iLike: 'Musique, guitare, voyages',
       dreamCity: 'Nashville',
       activity: 'Musicien',
@@ -109,7 +109,7 @@ export default class extends BaseSeeder {
       birthDate: new Date('1995-12-12'),
       description:
         'Chloe est une danseuse professionnelle qui aime également la mode et le cinéma. Elle rêve de se produire sur les plus grandes scènes du monde.',
-      cityOfBith: 'Lille',
+      cityOfBirth: 'Lille',
       iLike: 'Danse, mode, cinéma',
       dreamCity: 'Los Angeles',
       activity: 'Danseuse',
@@ -128,7 +128,7 @@ export default class extends BaseSeeder {
       birthDate: new Date('1987-03-04'),
       description:
         'Maxime est un chef cuisinier qui adore expérimenter de nouvelles recettes et saveurs. Il aime aussi le jardinage et le sport.',
-      cityOfBith: 'Strasbourg',
+      cityOfBirth: 'Strasbourg',
       iLike: 'Cuisine, jardinage, sport',
       dreamCity: 'Lyon',
       activity: 'Chef cuisinier',
@@ -147,7 +147,7 @@ export default class extends BaseSeeder {
       birthDate: new Date('1993-06-25'),
       description:
         'Lea est une écrivain qui aime créer des histoires captivantes. Elle adore également les voyages et la photographie.',
-      cityOfBith: 'Rennes',
+      cityOfBirth: 'Rennes',
       iLike: 'Écriture, voyages, photographie',
       dreamCity: 'Venise',
       activity: 'Écrivain',
@@ -166,7 +166,7 @@ export default class extends BaseSeeder {
       birthDate: new Date('1991-01-16'),
       description:
         'Julien est un ingénieur en informatique qui aime les jeux vidéo et les nouvelles technologies. Il rêve de travailler pour une grande entreprise de jeux vidéo.',
-      cityOfBith: 'Nantes',
+      cityOfBirth: 'Nantes',
       iLike: 'Jeux vidéo, technologies, voyages',
       dreamCity: 'San Francisco',
       activity: 'Ingénieur en informatique',
@@ -185,7 +185,7 @@ export default class extends BaseSeeder {
       birthDate: new Date('1994-09-29'),
       description:
         'Lucie est une passionnée de mode qui adore créer de nouvelles tenues et styles. Elle aime aussi la photographie et le design.',
-      cityOfBith: 'Montpellier',
+      cityOfBirth: 'Montpellier',
       iLike: 'Mode, photographie, design',
       dreamCity: 'Milan',
       activity: 'Styliste',
@@ -204,7 +204,7 @@ export default class extends BaseSeeder {
       birthDate: new Date('1986-11-11'),
       description:
         "Pierre est un passionné de sports extrêmes qui adore l'escalade, le surf et le VTT. Il aime aussi voyager et découvrir de nouveaux horizons.",
-      cityOfBith: 'Marseille',
+      cityOfBirth: 'Marseille',
       iLike: 'Sports extrêmes, voyages, nature',
       dreamCity: 'Sydney',
       activity: 'Instructeur de sports extrêmes',
@@ -223,7 +223,7 @@ export default class extends BaseSeeder {
       birthDate: new Date('1992-07-07'),
       description:
         'Manon est une passionnée de cuisine qui adore expérimenter de nouvelles recettes et découvrir des saveurs exotiques.',
-      cityOfBith: 'Lille',
+      cityOfBirth: 'Lille',
       iLike: 'Cuisine, voyages, jardinage',
       dreamCity: 'Tokyo',
       activity: 'Chef cuisinier',
@@ -242,7 +242,7 @@ export default class extends BaseSeeder {
       birthDate: new Date('1990-04-20'),
       description:
         'Quentin est un développeur de logiciels qui aime créer des applications innovantes. Il est passionné par la technologie et les jeux vidéo.',
-      cityOfBith: 'Toulouse',
+      cityOfBirth: 'Toulouse',
       iLike: 'Développement de logiciels, jeux vidéo, lecture',
       dreamCity: 'San Francisco',
       activity: 'Développeur de logiciels',
@@ -261,7 +261,7 @@ export default class extends BaseSeeder {
       birthDate: new Date('1995-05-12'),
       description:
         "Camille est une artiste de talent qui aime créer des œuvres d'art uniques. Elle aime également la photographie et la nature.",
-      cityOfBith: 'Bordeaux',
+      cityOfBirth: 'Bordeaux',
       iLike: 'Art, photographie, nature',
       dreamCity: 'Paris',
       activity: 'Artiste',
@@ -280,7 +280,7 @@ export default class extends BaseSeeder {
       birthDate: new Date('1988-02-02'),
       description:
         'Mathieu est un passionné de cinéma qui adore regarder des films et analyser des scénarios. Il aime aussi écrire et lire.',
-      cityOfBith: 'Nantes',
+      cityOfBirth: 'Nantes',
       iLike: 'Cinéma, écriture, lecture',
       dreamCity: 'Los Angeles',
       activity: 'Scénariste',
@@ -299,7 +299,7 @@ export default class extends BaseSeeder {
       birthDate: new Date('1996-08-08'),
       description:
         'Anais est une passionnée de mode qui adore créer de nouvelles tenues et styles. Elle aime également la photographie et le design.',
-      cityOfBith: 'Nice',
+      cityOfBirth: 'Nice',
       iLike: 'Mode, photographie, design',
       dreamCity: 'Milan',
       activity: 'Styliste',
@@ -318,7 +318,7 @@ export default class extends BaseSeeder {
       birthDate: new Date('1989-10-23'),
       description:
         "Florian est un développeur web passionné par les nouvelles technologies et l'innovation. Il aime aussi le sport et les voyages.",
-      cityOfBith: 'Toulouse',
+      cityOfBirth: 'Toulouse',
       iLike: 'Technologie, sport, voyages',
       dreamCity: 'San Francisco',
       activity: 'Développeur web',
@@ -337,7 +337,7 @@ export default class extends BaseSeeder {
       birthDate: new Date('1993-11-05'),
       description:
         'Julie est une passionnée de cuisine qui adore expérimenter de nouvelles recettes et découvrir des saveurs exotiques.',
-      cityOfBith: 'Lille',
+      cityOfBirth: 'Lille',
       iLike: 'Cuisine, voyages, jardinage',
       dreamCity: 'Tokyo',
       activity: 'Chef cuisinier',
@@ -356,7 +356,7 @@ export default class extends BaseSeeder {
       birthDate: new Date('1987-12-30'),
       description:
         "Nicolas est un passionné de sports extrêmes qui adore l'escalade, le surf et le VTT. Il aime aussi voyager et découvrir de nouveaux horizons.",
-      cityOfBith: 'Marseille',
+      cityOfBirth: 'Marseille',
       iLike: 'Sports extrêmes, voyages, nature',
       dreamCity: 'Sydney',
       activity: 'Instructeur de sports extrêmes',
@@ -375,7 +375,7 @@ export default class extends BaseSeeder {
       birthDate: new Date('1994-01-14'),
       description:
         'Amelie est une passionnée de mode qui adore créer de nouvelles tenues et styles. Elle aime également la photographie et le design.',
-      cityOfBith: 'Nice',
+      cityOfBirth: 'Nice',
       iLike: 'Mode, photographie, design',
       dreamCity: 'Milan',
       activity: 'Styliste',

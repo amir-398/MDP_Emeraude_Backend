@@ -5,8 +5,8 @@ export default class NotificationListener {
   async handle(notification: Notification) {
     if (!ws.io) return console.error('Websocket server not available')
     if (!notification) return console.error('Notification not found')
+
     const notificationParsed = JSON.parse(notification)
-    console.log('Notification:', notificationParsed)
 
     const getNotification = await Notification.query()
       .where('id', notificationParsed.id)
