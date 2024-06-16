@@ -1,3 +1,4 @@
+import Friendship from '#models/friendship'
 import User from '#models/user'
 import { updateUserPasswordValidator, updateUserValidator } from '#validators/update_user_data'
 import { cuid } from '@adonisjs/core/helpers'
@@ -9,12 +10,32 @@ import ChatSteamsController from './chat_steams_controller.js'
 
 export default class UserDataController {
   // get userData Profil
-  async index({ response, request }: HttpContext) {
+  async index({ response, request, auth }: HttpContext) {
     try {
       const { userId } = request.params()
-      if (!userId) return response.badRequest({ message: 'User not found' })
+      if (!userId) {
+        return response.badRequest({ message: 'User not found' })
+      }
+
+      const userConnectedId = auth.user?.id
+
       const user = await User.findOrFail(userId)
-      return response.ok(user)
+
+      // Charger les relations d'invitations reçues et envoyées
+      const friendsShips: Friendship[] | undefined | 0 =
+        userConnectedId &&
+        (await Friendship.query().where((builder) => {
+          builder
+            .where('userId1', userConnectedId)
+            .where('userId2', userId)
+            .orWhere('userId1', userId)
+            .where('userId2', userConnectedId)
+        }))
+
+      const friendShipStatus =
+        friendsShips && friendsShips.length > 0 ? friendsShips[0].status : null
+
+      return response.ok({ ...user.$attributes, friendShipStatus })
     } catch (error) {
       return response.badRequest({ message: error.message || 'Unauthorized' })
     }

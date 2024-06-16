@@ -16,7 +16,7 @@ export default class extends BaseSchema {
           {
             useNative: true,
             enumName: 'room_members_role',
-            existingType: true,
+            existingType: false,
           }
         )
         .defaultTo(RoomMembersRole.MEMBER)
