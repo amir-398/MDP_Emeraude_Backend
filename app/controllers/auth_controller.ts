@@ -38,19 +38,27 @@ export default class AuthController {
       // generate token
       const user = await User.findOrFail(id)
       const token = await User.accessTokens.create(user)
-      const streamToken = await chatStreamController.storeUser(
-        user.id,
-        user.firstname,
-        user.lastname,
-        user.profilImage
-      )
-      await chatStreamController.addUserToGroupChannels(user.id)
+      // create user and add to channel in stream t
+      try {
+        await chatStreamController.storeUser(
+          user.id,
+          user.firstname,
+          user.lastname,
+          user.profilImage
+        )
+        await chatStreamController.addUserToGroupChannels(user.id)
+      } catch (error) {
+        await trx.rollback()
+        return response.badRequest({ message: `Failed to add user to stream` })
+      }
+
+      const streamToken = streamClient.createToken(user.id.toString())
       return response.created({ token: token, streamToken: streamToken })
     } catch (error) {
       // rollback the transaction
+
       await trx.rollback()
-      console.log(error.message)
-      return response.status(401).json({ message: error })
+      return response.status(401).json({ message: error.message })
     }
   }
 

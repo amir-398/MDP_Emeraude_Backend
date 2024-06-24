@@ -95,7 +95,11 @@ export default class UserDataController {
   // update user password
 
   async updateUserPassword({ auth, request, response }: HttpContext) {
+    console.log('updateUserPassword', request.all())
+
     const { oldPassword, newPassword } = await request.validateUsing(updateUserPasswordValidator)
+    console.log(oldPassword, newPassword)
+
     try {
       const user = auth.getUserOrFail()
       if (!user) {
