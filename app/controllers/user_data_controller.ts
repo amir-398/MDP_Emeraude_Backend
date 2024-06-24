@@ -40,6 +40,7 @@ export default class UserDataController {
       return response.badRequest({ message: error.message || 'Unauthorized' })
     }
   }
+
   // get user data
   async show({ auth, response }: HttpContext) {
     try {
@@ -57,8 +58,6 @@ export default class UserDataController {
   async update({ auth, request, response }: HttpContext) {
     try {
       const user = auth.user
-      const oldProfilImage = user?.profilImage
-      const oldBucketKey = `profileImages/${user?.profilImage}`
 
       if (!user) {
         return response.status(401).json({ message: 'Unauthorized' })
@@ -67,6 +66,8 @@ export default class UserDataController {
       const profilImage = payload.profilImage
 
       if (profilImage) {
+        const oldProfilImage = user?.profilImage
+        const oldBucketKey = `profileImages/${user?.profilImage}`
         const imageId = `${cuid()}.${profilImage.subtype}`
         const bucketKey = `profileImages/${imageId}`
         try {
@@ -86,21 +87,17 @@ export default class UserDataController {
         user!.lastname,
         user!.profilImage
       )
-      return response.status(200).json({ data: user })
+      return response.ok({ data: user })
     } catch (error) {
-      return response.status(401).json({ message: error })
+      return response.badRequest({ message: error.message })
     }
   }
 
   // update user password
 
   async updateUserPassword({ auth, request, response }: HttpContext) {
-    console.log('updateUserPassword', request.all())
-
-    const { oldPassword, newPassword } = await request.validateUsing(updateUserPasswordValidator)
-    console.log(oldPassword, newPassword)
-
     try {
+      const { oldPassword, newPassword } = await request.validateUsing(updateUserPasswordValidator)
       const user = auth.getUserOrFail()
       if (!user) {
         return response.status(401).json({ message: 'Unauthorized' })
@@ -117,9 +114,9 @@ export default class UserDataController {
       //logout and delete all tokens
       await db.from('auth_access_tokens').where('tokenable_id', user.id).delete()
 
-      return response.status(200).json({ message: 'User password updated successfully' })
+      return response.ok({ message: 'User password updated successfully' })
     } catch (error) {
-      return response.status(401).json({ message: 'Unauthorized' })
+      return response.badRequest({ message: 'Invalid old password' })
     }
   }
 
@@ -127,15 +124,16 @@ export default class UserDataController {
     try {
       const user = auth.user
       if (!user) {
-        return response.status(401).json({ message: 'Unauthorized' })
+        return response.badRequest({ message: 'Unauthorized' })
       }
       const ChatSteamsControllerInstance = new ChatSteamsController()
       await db.from('auth_access_tokens').where('tokenable_id', user.id).delete()
       await user?.delete()
       await ChatSteamsControllerInstance.deleteUser(user!.id)
-      return response.status(200).json({ message: 'User deleted successfully' })
+      await new AssetsController().destroy(`profileImages/${user!.profilImage}`)
+      return response.ok({ message: 'User deleted successfully' })
     } catch (error) {
-      return response.status(401).json({ message: error.message })
+      return response.badRequest({ message: error.message })
     }
   }
 

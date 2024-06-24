@@ -80,7 +80,7 @@ router
 // posts & comments
 router
   .group(() => {
-    router.get('', [PostsController, 'index']).as('getPosts')
+    router.get('/', [PostsController, 'index']).as('getPosts')
     router.get('/:id', [PostsController, 'show']).as('getPost')
     router.post('/addPost', [PostsController, 'store']).as('storePost')
     router.post('/:postId/addComment', [CommentsController, 'store']).as('addComment')

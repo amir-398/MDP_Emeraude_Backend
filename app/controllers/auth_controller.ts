@@ -98,8 +98,8 @@ export default class AuthController {
   async verifyEmail({ response, request }: HttpContext) {
     const { email } = await request.validateUsing(userEmailValidator)
     try {
-      const isUserExist = (await User.findBy('email', email)) ? true : false
-      return response.send(isUserExist)
+      const isEmailExist = (await User.findBy('email', email)) ? true : false
+      return response.send({ isEmailExist })
     } catch (error) {
       response.badRequest({ message: 'error de vérification du mail' })
     }
