@@ -46,6 +46,9 @@
     "@types/luxon": "^3.4.2",
     "@types/node": "^20.12.7",
     "@types/pg": "^8.11.6",
+    "@types/swagger-ui-express": "^4.1.6",
+    "@types/yamljs": "^0.2.34",
+    "adonis-sail": "^1.0.0",
     "eslint": "^8.57.0",
     "hot-hook": "^0.2.6",
     "pino-pretty": "^11.0.0",
@@ -59,8 +62,6 @@
     "@adonisjs/core": "^6.9.0",
     "@adonisjs/cors": "^2.2.1",
     "@adonisjs/lucid": "^20.5.1",
-    "@adonisjs/redis": "^8.0.1",
-    "@adonisjs/transmit": "^1.0.0",
     "@aws-sdk/client-s3": "^3.569.0",
     "@aws-sdk/s3-request-presigner": "^3.569.0",
     "@vinejs/vine": "^2.0.0",
@@ -70,7 +71,9 @@
     "reflect-metadata": "^0.2.2",
     "socket.io": "^4.7.5",
     "stream": "^0.0.2",
-    "stream-chat": "^8.33.0"
+    "stream-chat": "^8.33.0",
+    "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0"
   },
   "hotHook": {
     "boundaries": [

@@ -60,15 +60,34 @@ export default class PostsController {
     try {
       if (await bouncer.with(RolePolicy).denies('isAdmin')) {
         return response.badRequest({
-          message: "Vous n'avez pas les droits pour effectuer cette action",
+          message: "You don't have the rights to perform this action",
         })
       }
 
       const userId = auth?.user?.id
-      const { title, categoryId, price, description, location, geoloc, images } =
-        await request.validateUsing(postValidator)
+      const {
+        title,
+        categoryId,
+        price,
+        description,
+        location,
+        geoloc,
+        images,
+        latitude,
+        longitude,
+      } = await request.validateUsing(postValidator)
 
-      const payload = { userId, title, categoryId, price, description, location, geoloc }
+      const payload = {
+        userId,
+        title,
+        categoryId,
+        price,
+        description,
+        location,
+        geoloc,
+        latitude,
+        longitude,
+      }
 
       const { id } = await Post.create(payload, { client: trx })
       try {
@@ -79,10 +98,10 @@ export default class PostsController {
         return response.badRequest({ message: error })
       }
       await trx.commit()
-      return response.status(201).json({ message: 'post crée avec succées' })
+      return response.created({ message: 'post created' })
     } catch (error) {
       await trx.rollback()
-      return response.badRequest({ message: error })
+      return response.badRequest({ message: error.message })
     }
   }
 
@@ -112,7 +131,7 @@ export default class PostsController {
     try {
       if (await bouncer.with(RolePolicy).denies('isAdmin')) {
         return response.badRequest({
-          message: "Vous n'avez pas les droits pour effectuer cette action",
+          message: "You don't have the rights to perform this action",
         })
       }
       const { id } = params
@@ -120,7 +139,7 @@ export default class PostsController {
       const post = await Post.findOrFail(id)
       post.merge(payload)
       await post.save()
-      return response.ok({ message: 'post modifié avec succées' })
+      return response.ok({ message: 'Post updated' })
     } catch (error) {
       return response.badRequest({ message: error.message })
     }
@@ -130,13 +149,13 @@ export default class PostsController {
     try {
       if (await bouncer.with(RolePolicy).denies('isAdmin')) {
         return response.badRequest({
-          message: "Vous n'avez pas les droits pour effectuer cette action",
+          message: "You don't have the rights to perform this action",
         })
       }
       const { id } = params
       const post = await Post.findOrFail(id)
       await post.delete()
-      return response.ok({ message: 'post supprimé avec succées' })
+      return response.ok({ message: 'Post deleted' })
     } catch (error) {
       return response.badRequest({ message: error.message })
     }

@@ -24,7 +24,7 @@ export default class ChatSteamsController {
   async removeUserFromChannels(userId: number) {
     try {
       const filters = { type: 'messaging' }
-      const sort = [{ last_message_at: -1 }]
+      const sort: any = [{ last_message_at: -1 }]
       const channels = await streamClient.queryChannels(filters, sort)
 
       for (const channel of channels) {
@@ -84,6 +84,7 @@ export default class ChatSteamsController {
         image: `https://frienddly.s3.eu-north-1.amazonaws.com/profileImages/${imageUrl}`,
       }
       await streamClient.upsertUser(streamUser)
+      return { message: 'User updated successfully' }
     } catch (error) {
       console.error('Error updating user:', error)
     }
@@ -92,14 +93,15 @@ export default class ChatSteamsController {
   async addUserToGroupChannels(userId: number) {
     try {
       const filters = { type: 'messaging', channelType: 'group' }
-      const sort = [{ last_message_at: -1 }]
+      const sort: any = [{ last_message_at: -1 }]
       const channels = await streamClient.queryChannels(filters, sort)
 
       for (const channel of channels) {
         await channel.addMembers([userId.toString()])
       }
+      return { message: 'User added to group channels successfully' }
     } catch (error) {
-      console.error('Error adding user to group channels:', error)
+      return { error: error }
     }
   }
 
@@ -110,8 +112,9 @@ export default class ChatSteamsController {
       await streamClient.deleteUser(userId.toString(), {
         hard_delete: true,
       })
+      return { message: 'User deleted successfully' }
     } catch (error) {
-      console.error('Error deleting user:', error)
+      return { error: error }
     }
   }
 }

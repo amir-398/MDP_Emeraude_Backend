@@ -13,9 +13,9 @@ export default class NotificationsController {
     try {
       const data = { userId, targetId, targetType }
       await Notification.create(data, { client: trx })
-      return { message: 'Notification created', status: 201 }
+      return { message: 'Notification created', status: 200 }
     } catch (error) {
-      return { message: error, status: 400 }
+      return { message: 'Fail to create notification', status: 400 }
     }
   }
 

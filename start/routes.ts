@@ -13,12 +13,9 @@ const CommentsController = () => import('#controllers/comments_controller')
 const GradesController = () => import('#controllers/grades_controller')
 const ChatSteamsController = () => import('#controllers/chat_steams_controller')
 const NotificationsController = () => import('#controllers/notifications_controller')
-const AssetsController = () => import('#controllers/assets_controller')
 import { middleware } from '#start/kernel'
 import router from '@adonisjs/core/services/router'
 const RoomsController = () => import('#controllers/rooms_controller')
-const MessagesController = () => import('#controllers/messages_controller')
-
 const AuthController = () => import('#controllers/auth_controller')
 const UserDataController = () => import('#controllers/user_data_controller')
 const FriendsController = () => import('#controllers/friends_controller')
@@ -80,7 +77,7 @@ router
 // posts & comments
 router
   .group(() => {
-    router.get('', [PostsController, 'index']).as('getPosts')
+    router.get('/', [PostsController, 'index']).as('getPosts')
     router.get('/:id', [PostsController, 'show']).as('getPost')
     router.post('/addPost', [PostsController, 'store']).as('storePost')
     router.post('/:postId/addComment', [CommentsController, 'store']).as('addComment')
@@ -114,3 +111,5 @@ router
   })
   .use(middleware.auth())
   .prefix('/api/v1/notifications')
+
+// swagger
