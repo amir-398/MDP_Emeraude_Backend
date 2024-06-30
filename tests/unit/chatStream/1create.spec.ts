@@ -5,7 +5,7 @@ test.group('Chat stream create', () => {
   // created chat stream
   test('it should create a chat stream', async ({ assert }) => {
     const userData = {
-      id: 2700,
+      id: 6700,
       firstname: 'Amir',
       lastname: 'Bouker',
       imageUrl: 'https://www.google.com',

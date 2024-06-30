@@ -55,16 +55,23 @@ export default class PostsController {
   }
 
   async store({ response, request, auth, bouncer }: HttpContext) {
+    // start a transaction
     const trx = await db.transaction()
-    // verifu if the user is admin
+
+    // verify if the user is admin
     try {
       if (await bouncer.with(RolePolicy).denies('isAdmin')) {
         return response.badRequest({
           message: "You don't have the rights to perform this action",
         })
       }
-
+      // get the user id from the auth object
       const userId = auth?.user?.id
+      if (!userId) {
+        return response.badRequest({ message: 'User not found' })
+      }
+
+      // validate the request
       const {
         title,
         categoryId,
@@ -89,7 +96,10 @@ export default class PostsController {
         longitude,
       }
 
+      // create the post
       const { id } = await Post.create(payload, { client: trx })
+
+      // create the post images
       try {
         const postImage = new PostImagesController()
         await postImage.store(id, images, trx)
@@ -97,9 +107,12 @@ export default class PostsController {
         await trx.rollback()
         return response.badRequest({ message: error })
       }
+
+      // commit the transaction
       await trx.commit()
       return response.created({ message: 'post created' })
     } catch (error) {
+      // rollback the transaction
       await trx.rollback()
       return response.badRequest({ message: error.message })
     }
