@@ -1,7 +1,9 @@
 import Roles from '#enums/role'
+import Comment from '#models/comment'
 import Friend from '#models/friendship'
 import Message from '#models/message'
 import Notification from '#models/notification'
+import Post from '#models/post'
 import RoomMember from '#models/room_member'
 import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
@@ -10,7 +12,6 @@ import hash from '@adonisjs/core/services/hash'
 import { BaseModel, column, computed, hasMany } from '@adonisjs/lucid/orm'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
-import Comment from './comment.js'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
@@ -105,4 +106,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   @hasMany(() => Comment)
   declare comments: HasMany<typeof Comment>
+
+  @hasMany(() => Post)
+  declare posts: HasMany<typeof Post>
 }

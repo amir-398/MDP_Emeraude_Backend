@@ -6,7 +6,8 @@
 | The routes file is used for defining the HTTP routes.
 |
 */
-
+import swagger from '#config/swagger'
+import AutoSwagger from 'adonis-autoswagger'
 const PostsController = () => import('#controllers/posts_controller')
 const CategoriesController = () => import('#controllers/categories_controller')
 const CommentsController = () => import('#controllers/comments_controller')
@@ -112,4 +113,14 @@ router
   .use(middleware.auth())
   .prefix('/api/v1/notifications')
 
-// swagger
+// returns swagger in YAML
+router.get('/swagger', async () => {
+  return AutoSwagger.default.docs(router.toJSON(), swagger)
+})
+
+// Renders Swagger-UI and passes YAML-output of /swagger
+router.get('/docs', async () => {
+  return AutoSwagger.default.ui('/swagger', swagger)
+  // return AutoSwagger.default.scalar('/swagger', swagger)
+  // return AutoSwagger.default.rapidoc('/swagger', swagger)
+})

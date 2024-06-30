@@ -2,9 +2,11 @@ import User from '#models/user'
 import db from '@adonisjs/lucid/services/db'
 import { test } from '@japa/runner'
 import { join } from 'node:path'
+
 test.group('Posts store', (group) => {
   let user: User
   let userNotAdmin: User
+
   group.each.setup(async () => {
     await db.beginGlobalTransaction()
     const findUser = await User.find(1)
@@ -12,6 +14,7 @@ test.group('Posts store', (group) => {
     findUser && (user = findUser)
     findUserNotAdmin && (userNotAdmin = findUserNotAdmin)
   })
+
   group.each.teardown(async () => {
     await db.rollbackGlobalTransaction()
   })

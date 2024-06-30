@@ -7,9 +7,14 @@ import { loginUserValidator } from '#validators/login_user'
 import { cuid } from '@adonisjs/core/helpers'
 import type { HttpContext } from '@adonisjs/core/http'
 import db from '@adonisjs/lucid/services/db'
-
 export default class AuthController {
   //register logic
+  /**
+   * @register
+   * @summary Register a new user
+   * @description Registers a new user, uploads profile image, and creates tokens
+   * @requestFormDataBody {"email": {"type":"string", "example": "amir.399@hotmail.fr"}, "password": {"type":"string","example": "Azerty98@"}, "firstname": {"type":"string","example": "Amir"}, "lastname": {"type":"string","example": "Meberbeche"}, "birthDate": {"type":"string","example": "1998-03-30"}, "profilImage": {"type":"string","format":"binary"}}
+   */
   async register({ request, response }: HttpContext) {
     //register logic
     const trx = await db.transaction()
@@ -63,6 +68,12 @@ export default class AuthController {
   }
 
   //login logic
+  /**
+   * @login
+   * @summary Login a user
+   * @description Logs in a user and returns JWT and stream tokens
+   * @requestBody {"email": "amir.398@hotmail.fr", "password": "Azerty23@"}
+   */
   async login({ response, request }: HttpContext) {
     try {
       // validate user data
