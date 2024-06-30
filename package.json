@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node build/bin/server.js",
     "build": "node ace build --ignore-ts-errors",
-    "dev": "node ace serve --hmr",
+    "dev": "node ace serve --watch",
     "test": "node ace test",
     "lint": "eslint .",
     "format": "prettier --write .",
@@ -65,6 +65,7 @@
     "@aws-sdk/client-s3": "^3.569.0",
     "@aws-sdk/s3-request-presigner": "^3.569.0",
     "@vinejs/vine": "^2.0.0",
+    "adonis-autoswagger": "^3.48.0",
     "geojson": "^0.5.0",
     "luxon": "^3.4.4",
     "pg": "^8.11.5",
@@ -74,12 +75,6 @@
     "stream-chat": "^8.33.0",
     "swagger-ui-express": "^5.0.1",
     "yamljs": "^0.3.0"
-  },
-  "hotHook": {
-    "boundaries": [
-      "./app/controllers/**/*.ts",
-      "./app/middleware/*.ts"
-    ]
   },
   "eslintConfig": {
     "extends": "@adonisjs/eslint-config/app"
