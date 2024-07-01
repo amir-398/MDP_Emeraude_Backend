@@ -79,5 +79,11 @@
   "eslintConfig": {
     "extends": "@adonisjs/eslint-config/app"
   },
+  "hotHook": {
+    "boundaries": [
+      "./app/controllers/**/*.ts",
+      "./app/middleware/*.ts"
+    ]
+  },
   "prettier": "@adonisjs/prettier-config"
 }
