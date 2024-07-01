@@ -94,7 +94,7 @@ export default class UserDataController {
         user!.lastname,
         user!.profilImage
       )
-      return response.ok(user)
+      return response.ok({ data: user })
     } catch (error) {
       return response.badRequest({ message: error.message })
     }
