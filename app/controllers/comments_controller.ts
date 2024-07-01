@@ -4,6 +4,12 @@ import { postCommentValidator, postIdParamValidator } from '#validators/comment'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class CommentsController {
+  /**
+   * @store
+   * @summary Create a new comment
+   * @description Create a new comment
+   * @requestBody {"content" : "Incroyable !"}
+   */
   async store({ auth, response, request, params }: HttpContext) {
     try {
       const payload = await request.validateUsing(postCommentValidator)
@@ -39,6 +45,12 @@ export default class CommentsController {
     }
   }
 
+  /**
+   * @update
+   * @summary update a comment
+   * @description update a comment
+   * @requestBody {"content" : "J'ai passé un tres bon moment !"}
+   */
   async update({ auth, response, request, params }: HttpContext) {
     try {
       const payload = await request.validateUsing(postCommentValidator)
@@ -71,6 +83,11 @@ export default class CommentsController {
     }
   }
 
+  /**
+   * @destroy
+   * @summary delete a comment
+   * @description delete a comment
+   */
   async destroy({ auth, response, params }: HttpContext) {
     try {
       const userId = auth.user?.id

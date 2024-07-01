@@ -13,7 +13,7 @@ export default {
   info: {
     title: 'Frienddly API',
     version: '1.0.0',
-    description: '',
+    description: 'Frienddly API documentation',
   },
   snakeCase: true,
 

@@ -10,6 +10,7 @@ import ChatSteamsController from './chat_steams_controller.js'
 
 export default class UserDataController {
   // get userData Profil
+
   async index({ response, request, auth }: HttpContext) {
     try {
       const { userId } = request.params()
@@ -55,6 +56,12 @@ export default class UserDataController {
   }
 
   // update user data
+  /**
+   * @update
+   * @summary Update user data
+   * @description Update user data
+   * @requestBody {"firstname": "Mathéo", "lastname": "Dupont"}
+   */
   async update({ auth, request, response }: HttpContext) {
     try {
       const user = auth.user
@@ -87,14 +94,19 @@ export default class UserDataController {
         user!.lastname,
         user!.profilImage
       )
-      return response.ok({ data: user })
+      return response.ok(user)
     } catch (error) {
       return response.badRequest({ message: error.message })
     }
   }
 
   // update user password
-
+  /**
+   * @updateUserPassword
+   * @summary update user password
+   * @description update user password
+   * @requestBody {"oldPassword": "Azerty98@", "newPassword": "qwerty98@"}
+   */
   async updateUserPassword({ auth, request, response }: HttpContext) {
     try {
       const { oldPassword, newPassword } = await request.validateUsing(updateUserPasswordValidator)
@@ -120,6 +132,40 @@ export default class UserDataController {
     }
   }
 
+  /**
+   * @searchUsers
+   * @summary Search users
+   * @description Search users by firstname and lastname
+   * @requestBody {"query": "lea"}
+   */
+  async searchUsers({ request, response, auth }: HttpContext) {
+    try {
+      const { query } = request.all()
+      if (!query) {
+        return response.badRequest({ message: 'Query is required' })
+      }
+      const queries = query.split(' ')
+      const userId = auth.user?.id
+
+      const users =
+        userId &&
+        (await User.query()
+          .select('id', 'firstname', 'lastname', 'profilImage')
+          .whereNot('id', userId)
+          .where((builder) => {
+            queries.forEach((word: string) => {
+              builder
+                .orWhere('firstname', 'ilike', `%${word}%`)
+                .orWhere('lastname', 'ilike', `%${word}%`)
+            })
+          }))
+      return response.ok(users)
+    } catch (error) {
+      return response.badRequest({ message: error.message })
+    }
+  }
+
+  // delete user data
   async destroy({ auth, response }: HttpContext) {
     try {
       const user = auth.user
@@ -132,36 +178,6 @@ export default class UserDataController {
       await ChatSteamsControllerInstance.deleteUser(user!.id)
       await new AssetsController().destroy(`profileImages/${user!.profilImage}`)
       return response.ok({ message: 'User deleted successfully' })
-    } catch (error) {
-      return response.badRequest({ message: error.message })
-    }
-  }
-
-  async searchUsers({ request, response, auth }: HttpContext) {
-    try {
-      const { query } = request.all()
-      if (!query) {
-        return response.badRequest({ message: 'Query is required' })
-      }
-      const capitalizedQueries = query
-        .split(' ')
-        .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-
-      const userId = auth.user?.id
-
-      const users =
-        userId &&
-        (await User.query()
-          .select('id', 'firstname', 'lastname', 'profilImage')
-          .whereNot('id', userId)
-          .where((builder) => {
-            capitalizedQueries.forEach((word: string) => {
-              builder
-                .orWhere('firstname', 'ilike', `%${word}%`)
-                .orWhere('lastname', 'ilike', `%${word}%`)
-            })
-          }))
-      return response.ok(users)
     } catch (error) {
       return response.badRequest({ message: error.message })
     }
