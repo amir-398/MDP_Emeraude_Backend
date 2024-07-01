@@ -72,7 +72,7 @@ export default class AuthController {
    * @login
    * @summary Login a user
    * @description Logs in a user and returns JWT and stream tokens
-   * @requestBody {"email": "amir.398@hotmail.fr", "password": "Azerty23@"}
+   * @requestBody {"email": "amir.399@hotmail.fr", "password": "Azerty23@"}
    */
   async login({ response, request }: HttpContext) {
     try {
@@ -106,6 +106,12 @@ export default class AuthController {
   }
 
   // const verify if emailExist
+  /**
+   * @verifyEmail
+   * @summary Verify if email exist
+   * @description Verify if email exist
+   * @requestBody {"email": "amir.399@hotmail.fr"}
+   */
   async verifyEmail({ response, request }: HttpContext) {
     const { email } = await request.validateUsing(userEmailValidator)
     try {
@@ -116,6 +122,7 @@ export default class AuthController {
     }
   }
 
+  // verify token
   async verifyToken({ auth, response }: HttpContext) {
     try {
       const authcheck = await auth.check()

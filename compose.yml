@@ -12,11 +12,11 @@ services:
       APP_KEY: '${APP_KEY}'
       NODE_ENV: '${NODE_ENV:-development}'
       DB_CONNECTION: pg
-      DB_HOST: pgsql
+      DB_HOST: '${DB_HOST}'
       DB_PORT: '${DB_PORT:-5432}'
       DB_USER: '${DB_USER}'
-      DB_PASSWORD: '${DB_PASSWORD:-secret}'
-      DB_DATABASE: '${DB_DATABASE:-default}'
+      DB_PASSWORD: '${DB_PASSWORD}'
+      DB_DATABASE: '${DB_DATABASE}'
     volumes:
       - '.:/app'
       - 'node_modules:/app/node_modules'
@@ -24,32 +24,12 @@ services:
       - 'logs:/app/logs'
     networks:
       - sail
-    depends_on:
-      - pgsql
-
-  pgsql:
-    image: 'postgres:15'
-    ports:
-      - '${DB_PORT:-5432}:5432'
-    environment:
-      POSTGRES_DB: '${DB_DATABASE:-default}'
-      POSTGRES_USER: '${DB_USER}'
-      POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
-    volumes:
-      - 'sailpgsql:/var/lib/postgresql/data'
-    networks:
-      - sail
-    healthcheck:
-      test: ['CMD', 'pg_isready', '-q', '-d', '${DB_DATABASE:-default}', '-U', '${DB_USER}']
-      retries: 3
-      timeout: 5s
 
 networks:
   sail:
     driver: bridge
 
 volumes:
-  sailpgsql:
   node_modules:
   uploads:
   logs:
