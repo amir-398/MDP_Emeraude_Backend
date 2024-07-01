@@ -72,6 +72,7 @@ export default class FriendsController {
     }
   }
   // get friends
+
   async getFriends({ auth, response }: HttpContext) {
     try {
       const user = auth.getUserOrFail()

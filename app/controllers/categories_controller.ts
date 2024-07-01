@@ -15,6 +15,13 @@ export default class CategoriesController {
     }
   }
 
+  /**
+   * @store
+   * @summary Create a new category
+   * @description Create a new category
+   * @requestBody {"name" : "category name"}
+   *
+   */
   async store({ response, request, bouncer }: HttpContext) {
     try {
       if (await bouncer.with(RolePolicy).denies('isAdmin')) {
@@ -41,6 +48,13 @@ export default class CategoriesController {
     }
   }
 
+  /**
+   * @update
+   * @summary update a category
+   * @description update a category
+   * @requestBody {"name" : "category name"}
+   *
+   */
   async update({ response, params, request, bouncer }: HttpContext) {
     try {
       if (await bouncer.with(RolePolicy).denies('isAdmin')) {
@@ -59,6 +73,12 @@ export default class CategoriesController {
     }
   }
 
+  /**
+   * @destroy
+   * @summary delete a category
+   * @description delete a category
+   *
+   */
   async destroy({ response, params, bouncer }: HttpContext) {
     try {
       if (await bouncer.with(RolePolicy).denies('isAdmin')) {

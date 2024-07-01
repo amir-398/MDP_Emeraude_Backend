@@ -7,6 +7,8 @@
 |
 */
 import swagger from '#config/swagger'
+import { middleware } from '#start/kernel'
+import router from '@adonisjs/core/services/router'
 import AutoSwagger from 'adonis-autoswagger'
 const PostsController = () => import('#controllers/posts_controller')
 const CategoriesController = () => import('#controllers/categories_controller')
@@ -14,8 +16,6 @@ const CommentsController = () => import('#controllers/comments_controller')
 const GradesController = () => import('#controllers/grades_controller')
 const ChatSteamsController = () => import('#controllers/chat_steams_controller')
 const NotificationsController = () => import('#controllers/notifications_controller')
-import { middleware } from '#start/kernel'
-import router from '@adonisjs/core/services/router'
 const RoomsController = () => import('#controllers/rooms_controller')
 const AuthController = () => import('#controllers/auth_controller')
 const UserDataController = () => import('#controllers/user_data_controller')
@@ -64,16 +64,16 @@ router
   .prefix('/api/v1/friends')
 
 //user rooms routes
-router
-  .group(() => {
-    router.post('/create', [RoomsController, 'create'])
-    router.post('/createGroup', [ChatSteamsController, 'createGroupChannel'])
-    router.get('/rooms', [RoomsController, 'index'])
-    router.get('/rooms/:id', [RoomsController, 'show'])
-    router.put('/:id', [RoomsController, 'update'])
-  })
-  .use(middleware.auth())
-  .prefix('/api/v1/rooms')
+// router
+//   .group(() => {
+//     router.post('/create', [RoomsController, 'create'])
+//     router.post('/createGroup', [ChatSteamsController, 'createGroupChannel'])
+//     router.get('/rooms', [RoomsController, 'index'])
+//     router.get('/rooms/:id', [RoomsController, 'show'])
+//     router.put('/:id', [RoomsController, 'update'])
+//   })
+//   .use(middleware.auth())
+//   .prefix('/api/v1/rooms')
 
 // posts & comments
 router

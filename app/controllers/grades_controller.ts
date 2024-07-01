@@ -6,6 +6,12 @@ import { postGradeController, postIdParamValidator } from '#validators/grade'
 import db from '@adonisjs/lucid/services/db'
 
 export default class GradesController {
+  /**
+   * @store
+   * @summary Create a new grade
+   * @description Create a new grade
+   * @requestBody {"grade" : "3"}
+   */
   async store({ auth, response, request, params }: HttpContext) {
     const trx = await db.transaction()
     try {
@@ -62,6 +68,12 @@ export default class GradesController {
     }
   }
 
+  /**
+   * @store
+   * @summary update a grade
+   * @description update a grade
+   * @requestBody {"grade" : "4"}
+   */
   async update({ auth, response, request, params }: HttpContext) {
     const trx = await db.transaction()
     try {
@@ -113,6 +125,12 @@ export default class GradesController {
     }
   }
 
+  /**
+   * @destroy
+   * @summary delete a grade
+   * @description delete a grade
+   *
+   */
   async destroy({ auth, response, params }: HttpContext) {
     const trx = await db.transaction()
     try {
