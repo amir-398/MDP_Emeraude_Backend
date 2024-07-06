@@ -51,3 +51,4 @@ DB_PASSWORD=your_db_password
 DB_DATABASE=frienddly
 ```
    
+test
