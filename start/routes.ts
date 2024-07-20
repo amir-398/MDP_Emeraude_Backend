@@ -10,13 +10,12 @@ import swagger from '#config/swagger'
 import { middleware } from '#start/kernel'
 import router from '@adonisjs/core/services/router'
 import AutoSwagger from 'adonis-autoswagger'
+const ChatSteamsController = () => import('#controllers/chat_steams_controller')
 const PostsController = () => import('#controllers/posts_controller')
 const CategoriesController = () => import('#controllers/categories_controller')
 const CommentsController = () => import('#controllers/comments_controller')
 const GradesController = () => import('#controllers/grades_controller')
-const ChatSteamsController = () => import('#controllers/chat_steams_controller')
 const NotificationsController = () => import('#controllers/notifications_controller')
-const RoomsController = () => import('#controllers/rooms_controller')
 const AuthController = () => import('#controllers/auth_controller')
 const UserDataController = () => import('#controllers/user_data_controller')
 const FriendsController = () => import('#controllers/friends_controller')
@@ -113,6 +112,13 @@ router
   .use(middleware.auth())
   .prefix('/api/v1/notifications')
 
+// chat stream
+router
+  .group(() => {
+    router.post('/createGroup', [ChatSteamsController, 'createGroupChannel'])
+  })
+  .use(middleware.auth())
+  .prefix('/api/v1/chat')
 // returns swagger in YAML
 router.get('/swagger', async () => {
   return AutoSwagger.default.docs(router.toJSON(), swagger)

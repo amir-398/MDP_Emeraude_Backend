@@ -30,6 +30,13 @@ export default class Post extends BaseModel {
       })
     })
   }
+
+  private static async preloadImages(query: ModelQueryBuilderContract<typeof Post>) {
+    query.preload('images', (imagesQuery) => {
+      imagesQuery.select('id', 'postId', 'url')
+    })
+  }
+
   @column({ isPrimary: true })
   declare id: number
 
@@ -75,6 +82,7 @@ export default class Post extends BaseModel {
   @beforeFetch()
   static async beforeFetchHook(query: ModelQueryBuilderContract<typeof Post>) {
     await this.preloadCategories(query)
+    await this.preloadImages(query)
   }
 
   @beforeFind()
@@ -82,6 +90,7 @@ export default class Post extends BaseModel {
     await this.preloadCategories(query)
     await this.preloadComments(query)
     await this.preloadGrades(query)
+    await this.preloadImages(query)
   }
 
   @hasMany(() => PostImage)

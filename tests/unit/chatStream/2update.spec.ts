@@ -6,7 +6,7 @@ test.group('Chat stream update', () => {
   test('it should update user data', async ({ assert }) => {
     const chatStreamController = new ChatSteamsController()
     const userData = {
-      id: 6700,
+      id: 9700,
       firstname: 'Fouad',
       lastname: 'Bouker',
       imageUrl: 'https://www.google.com',
