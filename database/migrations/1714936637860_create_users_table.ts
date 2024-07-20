@@ -13,7 +13,7 @@ export default class extends BaseSchema {
         .enu('role', [Roles.USER, Roles.ADMIN], {
           useNative: true,
           enumName: 'roles',
-          existingType: false,
+          existingType: true,
         })
         .defaultTo(Roles.USER)
         .notNullable()
