@@ -1,4 +1,5 @@
 import app from '@adonisjs/core/services/app'
+import { IncomingMessage, ServerResponse } from 'node:http'
 import Ws from '../app/services/ws.js'
 
 declare module 'http' {
