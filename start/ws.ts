@@ -1,4 +1,5 @@
 import app from '@adonisjs/core/services/app'
+import { IncomingMessage, ServerResponse } from 'node:http'
 import Ws from '../app/services/ws.js'
 
 declare module 'http' {
@@ -11,18 +12,18 @@ declare module 'http' {
 app.ready(() => {
   Ws.boot()
   const io = Ws.io
-  // io?.engine.use((req: IncomingMessage, res: ServerResponse, next: any) => {
-  //   const isHandshake = req._query.sid === undefined
-  //   if (!isHandshake) {
-  //     return next()
-  //   }
-  //   const header = req.headers['userid']
-  //   if (!header) {
-  //     return res.writeHead(401, 'Unauthorized').end()
-  //   }
-  //   req.user = header as string
-  //   next()
-  // })
+  io?.engine.use((req: IncomingMessage, res: ServerResponse, next: any) => {
+    const isHandshake = req._query.sid === undefined
+    if (!isHandshake) {
+      return next()
+    }
+    const header = req.headers['userid']
+    if (!header) {
+      return res.writeHead(401, 'Unauthorized').end()
+    }
+    req.user = header as string
+    next()
+  })
   io?.on('connection', (socket) => {
     const userId = socket.request.user
     if (!userId) {

@@ -56,7 +56,7 @@ export default class ChatSteamsController {
       await channel.create()
       return response.ok({ message: 'Channel created successfully' })
     } catch (error) {
-      return response.badRequest({ message: error.message || 'Unauthorized' })
+      return response.badRequest({ message: error || 'Unauthorized' })
     }
   }
   // store user in stream

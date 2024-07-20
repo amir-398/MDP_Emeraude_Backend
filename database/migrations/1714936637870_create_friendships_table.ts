@@ -26,7 +26,7 @@ export default class extends BaseSchema {
         .enu('status', [Status.ACCEPTED, Status.PENDING, Status.REJECTED], {
           useNative: true,
           enumName: 'friendship_status',
-          existingType: false,
+          existingType: true,
         })
         .defaultTo(Status.PENDING)
         .notNullable()
